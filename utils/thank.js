@@ -1,36 +1,46 @@
 let Thank = require('../models/Thank.js');
+let userUtil = require('./user');
 
 module.exports = {
-  getAllUsers: function () {
+  getAllThanksNum: function () {
     return new Promise((resolve, reject) => {
-      User.count({}, (err, users) => {
+      Thank.count({}, (err, thanks) => {
         if (err) reject(err);
-        resolve(users);
+        resolve(thanks);
       })
     })
   },
-  getUser: function (id) {
+  getAllThanks: function () {
     return new Promise((resolve, reject) => {
-      User.findOne({ id: id }, (err, user) => {
+      Thank.find({}, (err, thanks) => {
         if (err) reject(err);
-        resolve(user);
+        resolve(thanks);
       })
     })
   },
-  setUser: function (params) {
+  getThank: function (id) {
     return new Promise((resolve, reject) => {
-      // Rank is a string such as MVP, Senior, Staff etc.
-      // TODO: Add this as a setting to allow change
-      multiplier = {
-        'Staff': 1.1,
-        'MVP': 1.05,
-        'Senior': 1.02,
-        'verified': 1.0,
-      }
-      let m = multiplier[params.rank];
-      User.findOneAndUpdate({ id: params.id }, { id: params.id, multiplier: m }, { upsert: true }, (err, u) => {
+      Thank.findOne({ _id: id }, (err, thank) => {
         if (err) reject(err);
-        resolve(u);
+        resolve(thank);
+      })
+    })
+  },
+  setThank: function (params) {
+    return new Promise((resolve, reject) => {
+      /*
+       * Thankee
+       * thanker
+       * Message
+       * Channel
+       * Guild
+       */
+      Thank.create({ thankee: params.thankee._id, thanker: params.thanker._id, message: params.message, channel: params.channel, guild: params.guild }, (err, thank) => {
+        userUtil.updatePoints(params.thankee._id, 1).then((thankee, _err) => {
+          if (err) reject(err);
+          if (_err) reject(_err);
+          resolve(thank);
+        })
       });
     })
 

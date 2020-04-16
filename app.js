@@ -37,6 +37,7 @@ const router = new Router();
 // require our external routes and pass in the router
 require('./routes/basic')({ router });
 require('./routes/user')({ router });
+require('./routes/thanks')({ router });
 
 
 // tells the router to use all the routes that are on the object

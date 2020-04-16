@@ -27,6 +27,6 @@ let ThankSchema = new Schema({
   },
 });
 
-let User = mongoose.model('User', UserSchema);
+let Thank = mongoose.model('Thank', ThankSchema);
 
-module.exports = User;
+module.exports = Thank;

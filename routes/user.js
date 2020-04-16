@@ -6,14 +6,23 @@ module.exports =  ({ router }) => {
   router.get('/user/', async (ctx, next) => {
     let result;
     try {
-      result = await Promise.resolve(userUtil.getAllUsers());
+      result = await Promise.resolve(userUtil.getAllUsersNum());
     } catch (e) {
       console.error(e)
-
     }
     ctx.body = {totalUsers: result};
   });
 
+  router.get('/user/all', async (ctx, next) => {
+    let result;
+    try {
+      result = await Promise.resolve(userUtil.getAllUsers());
+    } catch (e) {
+      console.error(e)
+    }
+    ctx.body = { totalUsers: result };
+  });
+  
   router.post('/user/', async (ctx, next) => {
     let params = ctx.request.body;
     let result;

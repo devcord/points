@@ -1,9 +1,17 @@
 let User = require('../models/User.js');
 
 module.exports = {
-  getAllUsers: function () {
+  getAllUsersNum: function () {
     return new Promise((resolve, reject) => {
       User.count({}, (err, users) => {
+        if (err) reject(err);
+        resolve(users);
+      })
+    })
+  },
+  getAllUsers: function () {
+    return new Promise((resolve, reject) => {
+      User.find({}, (err, users) => {
         if (err) reject(err);
         resolve(users);
       })
@@ -29,10 +37,23 @@ module.exports = {
       }
       let m = multiplier[params.rank];
       User.findOneAndUpdate({ id: params.id }, { id: params.id, multiplier: m }, { upsert: true }, (err, u) => {
-        if (err) reject(err); 
+        if (err) reject(err);
         resolve(u);
       });
-    })
-
+    });
   },
+  updatePoints:  function (objId, points) {
+    return new Promise((resolve, reject) => {
+      User.findById(objId, (err, user) => {
+        let p = user.points;
+        let m = user.multiplier;
+
+        p += (m * points);
+
+        User.update({ _id: objId }, { points: p }, (err, user) => {
+          resolve(user);
+        });
+      });  
+    });
+  }
 }

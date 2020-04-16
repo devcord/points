@@ -1,41 +1,58 @@
-let userUtil = require('../utils/thank');
+let thankUtil = require('../utils/thank');
+let userUtil = require('../utils/user');
 
 module.exports = ({ router }) => {
 
   // getting the home route
-  router.get('/user/', async (ctx, next) => {
+  router.get('/thank/', async (ctx, next) => {
     let result;
     try {
-      result = await Promise.resolve(userUtil.getAllUsers());
+      result = await Promise.resolve(thankUtil.getAllThanksNum());
     } catch (e) {
       console.error(e)
 
     }
-    ctx.body = { totalUsers: result };
+    ctx.body = { totalThanks: result };
   });
 
-  router.post('/user/', async (ctx, next) => {
-    let params = ctx.request.body;
+  router.get('/thank/all', async (ctx, next) => {
     let result;
     try {
-      result = await Promise.resolve(userUtil.setUser(params));
+      result = await Promise.resolve(thankUtil.getAllThanks());
     } catch (e) {
       console.error(e)
 
     }
+    ctx.body = { totalThanks: result };
+  });
+
+  router.post('/thank/', async (ctx, next) => {
+    let params = ctx.request.body;
+    let result;
+    params.thankee = await Promise.resolve(userUtil.getUser(params.thankee));
+    params.thanker = await Promise.resolve(userUtil.getUser(params.thanker));
+    
+    try {
+      result = await Promise.resolve(thankUtil.setThank(params));
+    } catch (e) {
+      console.error(e)
+      ctx.status = 500;
+      ctx.body = 'error';
+    }
+    ctx.status = 201;
     ctx.body = result;
   })
 
-  router.get('/user/:id', async (ctx, next) => {
+  router.get('/thank/:id', async (ctx, next) => {
     let result;
     try {
-      result = await Promise.resolve(userUtil.getUser(ctx.params.id));
+      result = await Promise.resolve(thankUtil.getThank(ctx.params.id));
     } catch (e) {
       console.error(e)
     }
     if (result == undefined || result == null) {
       ctx.status = 404;
-      ctx.body = { error: 'User not found' }
+      ctx.body = { error: 'thank not found' }
     } else {
       ctx.body = result;
     }
