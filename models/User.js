@@ -1,26 +1,26 @@
 const mongoose = require('mongoose');
 
-let Schema = mongoose.Schema;
+const { Schema } = mongoose;
 
-let UserSchema = new Schema({
+const UserSchema = new Schema({
   id: {
     type: Number,
     index: {
       uniqe: true,
-      dropDups: true
-    }
+      dropDups: true,
+    },
   },
   points: {
     type: Number,
-    default: 0
+    default: 0,
   },
   multiplier: Number,
   updated: {
     type: Date,
-    default: Date.now()
+    default: Date.now(),
   },
 });
 
-let User = mongoose.model('User', UserSchema);
+const User = mongoose.model('User', UserSchema);
 
 module.exports = User;

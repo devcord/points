@@ -1,39 +1,33 @@
 const Koa = require('koa');
 const logger = require('koa-logger');
 const Router = require('koa-router');
-var bodyParser = require('koa-bodyparser');
+const bodyParser = require('koa-bodyparser');
 const mongoose = require('mongoose');
+require('dotenv').config();
+
+const errorHandler = require('./utils/errorHandler');
 
 const app = new Koa();
+
+app.use(errorHandler);
 
 // log all events to the terminal
 app.use(logger());
 
 app.use(bodyParser());
 
-// error handling
-app.use(async (ctx, next) => {
-  ctx.body = ctx.request.body;
+mongoose.connect(`${process.env.MONGO_URL}`, { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true });
 
-  try {
-    await next();
-  } catch (err) {
-    ctx.status = err.status || 500;
-    ctx.body = err.message;
-    ctx.app.emit('error', err, ctx);
-  }
-});
+// Get the default connection
+const db = mongoose.connection;
 
-mongoose.connect('mongodb://127.0.0.1:27017/points', { useNewUrlParser: true, useUnifiedTopology: true});
-
-//Get the default connection
-var db = mongoose.connection;
-
-//Bind connection to error event (to get notification of connection errors)
+// Bind connection to error event (to get notification of connection errors)
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
 // instantiate our new Router
 const router = new Router();
+
+
 // require our external routes and pass in the router
 require('./routes/basic')({ router });
 require('./routes/user')({ router });
@@ -45,5 +39,8 @@ app.use(router.routes());
 app.use(router.allowedMethods());
 
 // tell the server to listen to events on a specific port
-const server = app.listen(3000);
+const PORT = process.env.PORT || 3000;
+const server = app.listen(PORT, () => {
+  console.log(`Server listening on ${PORT}`);
+});
 module.exports = server;

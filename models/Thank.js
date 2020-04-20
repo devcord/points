@@ -1,32 +1,32 @@
 const mongoose = require('mongoose');
 
 
-let Schema = mongoose.Schema;
+const { Schema } = mongoose;
 
-let ThankSchema = new Schema({
+const ThankSchema = new Schema({
   thankee: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User'
+    ref: 'User',
   },
   thanker: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User'
+    ref: 'User',
   },
   message: {
-    type: String
+    type: String,
   },
   channel: {
-    type: Number
+    type: Number,
   },
   Guild: {
-    type: Number
+    type: Number,
   },
   updated: {
     type: Date,
-    default: Date.now()
+    default: Date.now(),
   },
 });
 
-let Thank = mongoose.model('Thank', ThankSchema);
+const Thank = mongoose.model('Thank', ThankSchema);
 
 module.exports = Thank;
