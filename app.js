@@ -6,10 +6,12 @@ const mongoose = require('mongoose');
 require('dotenv').config();
 
 const errorHandler = require('./utils/errorHandler');
+const authHandler = require('./utils/authHandler');
 
 const app = new Koa();
 
 app.use(errorHandler);
+app.use(authHandler);
 
 // log all events to the terminal
 app.use(logger());
