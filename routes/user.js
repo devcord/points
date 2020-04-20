@@ -40,7 +40,7 @@ module.exports = ({ router }) => {
     } catch (e) {
       console.error(e);
     }
-    if (result == undefined || result == null) {
+    if (result === undefined || result === null) {
       ctx.status = 404;
       ctx.body = { error: 'User not found' };
     } else {
