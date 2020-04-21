@@ -25,6 +25,16 @@ module.exports = {
       });
     });
   },
+  getUsers(ids) {
+    return new Promise((resolve, reject) => {
+      User.find({
+        id: { $in: ids },
+      }, (err, users) => {
+        if (err) reject(err);
+        resolve(users);
+      });
+    });
+  },
   setUser(params) {
     return new Promise((resolve, reject) => {
       // Rank is a string such as MVP, Senior, Staff etc.

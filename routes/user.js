@@ -47,4 +47,20 @@ module.exports = ({ router }) => {
       ctx.body = result;
     }
   });
+
+  router.get('/user/multiple/:array', async (ctx) => {
+    const ids = ctx.params.array.split(',');
+    let result;
+    try {
+      result = await Promise.resolve(userUtil.getUsers(ids));
+    } catch (e) {
+      console.error(e);
+    }
+    if (result === undefined || result === null) {
+      ctx.status = 404;
+      ctx.body = { error: 'Users not found' };
+    } else {
+      ctx.body = result;
+    }
+  });
 };
