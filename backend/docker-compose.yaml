@@ -1,0 +1,17 @@
+version: "3"
+
+networks:
+        api_server:
+                external: true
+
+services:
+        points:
+                networks:
+                        - api_server
+                build:
+                        context: .
+                        dockerfile: Dockerfile
+                environment:
+                        ENV_NAME: production
+                ports:
+                        - 3000:3000

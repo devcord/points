@@ -1,21 +1,22 @@
-FROM node:12.13
+FROM mhart/alpine-node:12
 
-ENV SOURCE=/opt/app/koa-mongoose-start
+# ENV
+ENV NODE_ENV=production
+ENV SOURCE=/opt/app/points
 
 RUN mkdir -p $SOURCE
 WORKDIR $SOURCE
 
-COPY ./package-lock.json $SOURCE/package-lock.json
-COPY ./package.json $SOURCE/package.json
-COPY ./tsconfig.json $SOURCE/tsconfig.json
+COPY package.json .
+COPY tsconfig.json .
+COPY yarn.lock . 
 
-RUN npm install
+RUN yarn global add tsc typescript ts-node
+RUN yarn install
 
-COPY ./src/ $SOURCE/src/
+ADD . $SOURCE
 
-EXPOSE 3000 3000
+RUN yarn start 
 
-ENV TS_NODE=${SOURCE}/node_modules/.bin/ts-node
-ENV TS_EXEC=${SOURCE}/src/index.ts
+EXPOSE 3000
 
-CMD $TS_NODE $TS_EXEC
