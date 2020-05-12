@@ -13,8 +13,10 @@ class Router {
 
     privateRouter.use(jwtMiddleware.authenticate);
 
+    privateRouter.route(USER_ROUTES.read_all)
     privateRouter.route(USER_ROUTES.read)
     privateRouter.route(USER_ROUTES.update)
+    privateRouter.route(USER_ROUTES.points)
 
     publicRouter.route(USER_ROUTES.create);
     publicRouter.route(HEALTH_ROUTES.read);

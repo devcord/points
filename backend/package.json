@@ -2,6 +2,7 @@
   "name": "devcord-points",
   "version": "0.0.1",
   "description": "wew",
+  "license": "MIT",
   "main": "./src/index.ts",
   "scripts": {
     "build-docker": "make build",
@@ -28,7 +29,6 @@
   ],
   "dependencies": {
     "@koa/cors": "^2.2.3",
-    "bcrypt": "^3.0.8",
     "bluebird": "^3.7.2",
     "jsonwebtoken": "^8.5.1",
     "koa": "^2.11.0",
@@ -38,7 +38,6 @@
     "mongoose": "^5.9.6"
   },
   "devDependencies": {
-    "@types/bcrypt": "^3.0.0",
     "@types/bluebird": "^3.5.30",
     "@types/chai": "^4.2.11",
     "@types/jest": "^24.9.1",

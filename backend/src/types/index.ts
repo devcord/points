@@ -46,7 +46,8 @@ enum Responses {
   NO_ACCESS_USER       = 'You do not have access to this User',
   INTERNAL_ERROR       = 'An internal server has error occured',
   SOMETHING_WENT_WRONG = 'Something went very wrong',
-  INVALID_CREDS        = 'Invalid Credentials'
+  INVALID_CREDS = 'Invalid Credentials',
+  POINTS_UNDEFINED = 'Unable to update users points',
 };
 
 /**

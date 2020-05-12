@@ -1,4 +1,3 @@
-import BCRYPT from 'bcrypt';
 import MONGOOSE from 'mongoose';
 
 type toNormalizationFunction = () => UserType;
@@ -32,6 +31,7 @@ const toNormalization: toNormalizationFunction = function () {
 
   return UserObject;
 };
+
 
 userSchema.methods.toNormalization = toNormalization;
 

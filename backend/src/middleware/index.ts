@@ -16,7 +16,7 @@ class Middleware {
     }
   
     const PARTS = ctx.header.authorization.split(' ');
-  
+
     if (PARTS.length === 2) {
       const SCHEME:string      = PARTS[0];
       const CREDENTIALS:string = PARTS[1];
@@ -41,8 +41,9 @@ class Middleware {
       public static authenticate = async (ctx: BaseContext, next: Function) => {
         const token = Middleware.resolveAuthorizationHeader(ctx);
       
+
         if (token !== null) {
-          const decodedToken:{id: string}|null = await Jwt.verify(token).catch( err => null);
+          const decodedToken: { id: string } | null = await Jwt.verify(token).catch(err => null);
           if (decodedToken) {
             ctx.state.user = decodedToken;
             return await next();
