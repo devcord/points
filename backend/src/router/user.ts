@@ -1,16 +1,20 @@
-import { Joi as JOI, Spec } from "koa-joi-router";
-import { SchemaMap } from "joi";
+import {Joi as JOI, Spec } from 'koa-joi-router';
+import {SchemaMap} from 'joi';
 
-import HELPER from "./helper";
-import USER_CONTROLLER from "../controller/user";
+import HELPER from './helper';
+import USER_CONTROLLER from '../controller/user';
 
 class UserRouter {
   private static userOutput: SchemaMap = {
     id: JOI.string(),
-    email: JOI.string(),
-    first_name: JOI.string(),
-    last_name: JOI.string(),
+    points: JOI.number(),
   };
+
+  // public static get: Spec = {
+  //   method: HELPER.methods.GET,
+  //   path: "/user",
+
+  // }
 
   public static create: Spec = {
     method: HELPER.methods.POST,
@@ -19,16 +23,8 @@ class UserRouter {
       continueOnError: true,
       type: HELPER.contentType.JSON,
       body: JOI.object({
-        first_name: JOI.string()
-          .alphanum()
-          .max(HELPER.defaults.length)
-          .required(),
-        last_name: JOI.string()
-          .alphanum()
-          .max(HELPER.defaults.length)
-          .required(),
-        email: JOI.string().lowercase().email().required(),
-        password: JOI.string().min(14).max(HELPER.defaults.length).required(),
+        id: JOI.string().alphanum().required(),
+        points: JOI.number().integer(),
       }).options({ stripUnknown: true }),
       output: Object.assign(
         {},
@@ -57,8 +53,8 @@ class UserRouter {
         id: JOI.string().regex(HELPER.mongoObjectRegEx),
       }),
       body: JOI.object({
-        first_name: JOI.string().alphanum().max(HELPER.defaults.length),
-        last_name: JOI.string().alphanum().max(HELPER.defaults.length),
+        id: JOI.string().alphanum().required(),
+        points: JOI.number().integer(),
       }).options({ stripUnknown: true }),
       output: Object.assign(
         {},
@@ -102,6 +98,6 @@ class UserRouter {
     },
     handler: [HELPER.validation, USER_CONTROLLER.read],
   };
-}
+};
 
 export default UserRouter;

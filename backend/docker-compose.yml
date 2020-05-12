@@ -1,0 +1,18 @@
+version: '2'
+services:
+  app-starter:
+    container_name: "devcord Points"
+    image: typescript-node-example:latest
+    env_file: ./deploy.env
+    ports:
+      - 3000:3000
+    links:
+      - mongodb
+    depends_on:
+      - mongodb
+  mongodb:
+    image: mongo:latest
+    container_name: "devcord-points-mongo"
+    ports:
+      - 27017:27017
+    command: mongod
