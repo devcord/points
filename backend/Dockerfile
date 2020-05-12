@@ -11,12 +11,12 @@ COPY package.json .
 COPY tsconfig.json .
 COPY yarn.lock . 
 
-RUN yarn global add tsc typescript ts-node
+RUN yarn global add typescript ts-node
 RUN yarn install
 
 ADD . $SOURCE
 
-RUN yarn start 
+EXPOSE 3000 3000
 
-EXPOSE 3000
+ENTRYPOINT ["yarn", "start"]
 
