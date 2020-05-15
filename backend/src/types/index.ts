@@ -48,6 +48,7 @@ enum Responses {
   SOMETHING_WENT_WRONG = 'Something went very wrong',
   INVALID_CREDS = 'Invalid Credentials',
   POINTS_UNDEFINED = 'Unable to update users points',
+  USER_NOT_FOUND = 'User not found'
 };
 
 /**

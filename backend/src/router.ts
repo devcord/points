@@ -19,6 +19,7 @@ class Router {
     privateRouter.route(USER_ROUTES.points)
 
     publicRouter.route(USER_ROUTES.create);
+    publicRouter.route(USER_ROUTES.exists);
     publicRouter.route(HEALTH_ROUTES.read);
 
     publicRouter.get('*', BLACKHOLE_ROUTES.read.handler);

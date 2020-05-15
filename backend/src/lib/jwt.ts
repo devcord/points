@@ -22,7 +22,7 @@ class Jwt {
     this.secret = config.secret
   };
 
-  public verify:VerifyFunction = (token) => {
+  public verify: VerifyFunction = (token) => {
     return new Promise ((resolve, reject) => {
       if (!token) reject(null);
       JWT.verify(token, this.secret, (err, response) => {

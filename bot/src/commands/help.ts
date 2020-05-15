@@ -13,13 +13,12 @@ export class HelpCommand implements Command {
   }
 
   async run(commandContext: CommandContext): Promise<void> {
-    const allowedCommands = this.commands.filter(command => command.hasPermissionToRun(commandContext));
-
+    let allowedCommands = this.commands.filter(command => command.hasPermissionToRun(commandContext));
     if (commandContext.args.length == 0) {
       // No command specified, give the user a list of all commands they can use.
       const commandNames = allowedCommands.map(command => command.commandNames[0]);
       await commandContext.originalMessage.reply(
-        `Here is a list of commands you can run: ${commandNames.join("\n- ")}. Try ${config.prefix}help ${commandNames[0]} to learn more about one of them.`);
+        `Here is a list of commands you can run: \n - ${commandNames.join("\n - ")} \nTry ${config.prefix}help ${commandNames[0]} to learn more about one of them.`);
       return;
     }
 

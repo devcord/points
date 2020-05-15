@@ -1,68 +1,117 @@
-import { Message } from "discord.js";
+import { Message, User } from "discord.js";
 import { Command } from "../commands/command";
 import { CommandContext } from "../models/command_context";
 import { HelpCommand } from "../commands/help";
 import { reactor } from "../reactions/reactor";
 import { config } from "../config/config";
+import { UserType } from "../types"
+import * as jwt from "jsonwebtoken";
+import axios from "axios";
 
-import { TopCommand } from "../commands/top";
 
-/** Handler for bot commands issued by users. */
-export class CommandHandler {
-  private commands: Command[];
+const API_URL = config.apiUrl;
 
-  private readonly prefix: string;
+/** Handler for points */
+export class PointsHandler {
+         private readonly prefix: string;
 
-  constructor(prefix: string) {
-    const commandClasses = [
-      TopCommand,
-      // TODO: Add more commands here.
-    ];
+         constructor(prefix: string) {
+           this.prefix = prefix;
+         }
 
-    this.commands = commandClasses.map((commandClass) => new commandClass());
-    this.commands.push(new HelpCommand(this.commands));
-    this.prefix = prefix;
-  }
+         /* Handles points if it is not by a bot and its not a command */
+         async handleMessage(message: Message): Promise<void> {
+           if (message.author.bot || this.isCommand(message)) {
+             return;
+           }
 
-  /** Executes user commands contained in a message if appropriate. */
-  async handleMessage(message: Message): Promise<void> {
-    if (message.author.bot || !this.isCommand(message)) {
-      return;
-    }
+           let user = await this.get_user(message.author);
+           if (user) {
+             let points = 1 * this.get_multiplier(message);
+             user.points = points;
+             this.update_user(user);
+           } else {
+             throw new Error("Something what terribly wrong!");
+           }
+         }
 
-    const commandContext = new CommandContext(message, this.prefix);
+         /** Determines whether or not a message is a user command. */
+         private isCommand(message: Message): boolean {
+           return message.content.startsWith(this.prefix);
+         }
 
-    const allowedCommands = this.commands.filter((command) =>
-      command.hasPermissionToRun(commandContext)
-    );
-    const matchedCommand = this.commands.find((command) =>
-      command.commandNames.includes(commandContext.parsedCommandName)
-    );
+         private apiClient = axios.create({
+           baseURL: API_URL,
+           responseType: "json",
+           headers: {
+             "Content-Type": "application/json",
+           },
+         });
 
-    if (!matchedCommand) {
-      await message.reply(
-        `I don't recognize that command. Try ${config.prefix}help.`
-      );
-      await reactor.failure(message);
-    } else if (!allowedCommands.includes(matchedCommand)) {
-      await message.reply(
-        `You aren't allowed to use that command. Try ${config.prefix}help.`
-      );
-      await reactor.failure(message);
-    } else {
-      await matchedCommand
-        .run(commandContext)
-        .then(() => {
-          reactor.success(message);
-        })
-        .catch((reason) => {
-          reactor.failure(message);
-        });
-    }
-  }
+         private async get_user(user: User): Promise<UserType> {
+           let token = this.get_token(user.id);
 
-  /** Determines whether or not a message is a user command. */
-  private isCommand(message: Message): boolean {
-    return message.content.startsWith(this.prefix);
-  }
-}
+           this.apiClient.interceptors.request.use((c) => {
+             c.headers.get["Authorization"] = "Bearer " + token;
+             return c;
+           });
+
+           try {
+             const resp = await this.apiClient.get("/user/" + user.id);
+             let u: UserType = resp.data.data;
+             return u;
+           } catch (e) {
+             if (e && e.response) {
+               if (e.response.data.code == 400) {
+                 return this.create_user(user);
+               } else {
+                 // Error
+                 console.error(e.response.data);
+               }
+             }
+           }
+         }
+
+         private async create_user(user: User): Promise<UserType> {
+           let u: UserType = { id: user.id, points: 0 };
+
+           try {
+             const resp = await this.apiClient.post<UserType>("/user", u);
+             return resp.data;
+           } catch (e) {
+             if (e && e.response) console.error(e.response.data);
+             else throw e;
+           }
+         }
+
+         private async update_user(user: UserType): Promise<UserType> {
+           let token = this.get_token(user.id);
+
+           this.apiClient.interceptors.request.use((c) => {
+             c.headers.post["Authorization"] = "Bearer " + token;
+             return c;
+           });
+
+           try {
+             const resp = await this.apiClient.post(`/user/${user.id}/points`, user);
+             let u = resp.data.data;
+             return u;
+           } catch (e) {
+             if (e && e.response) console.error(e.response.data);
+             else throw e;
+           }
+
+         }
+
+         private get_multiplier(message: Message): number {
+           let n = 1;
+
+
+           return n;
+         }
+
+         private get_token(id: string): string {
+           let token: string = jwt.sign({ id }, config.jwtSecret);
+           return token;
+         }
+       }

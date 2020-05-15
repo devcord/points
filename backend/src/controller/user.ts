@@ -85,6 +85,25 @@ class UserController {
     }
   };
 
+  public static exists = async (ctx: ModifiedContext) => {
+    // if (!ctx.state.user || ctx.params.id != ctx.state.user.id)
+    //   return ctx.respond(403, Responses.NO_ACCESS_USER);
+
+    
+    const body: InputUpdateBodyType = ctx.request.body;
+
+    const user: UserDocument | null = await UserModel.findOne({
+      id: ctx.params.id,
+    });
+    
+    if (user) {
+      let response: boolean = true;
+      return ctx.respond(200, response);
+    } else {
+      return ctx.respond(400, Responses.USER_NOT_FOUND);
+    }
+  };
+
   public static points = async (ctx: ModifiedContext) => {
     if (!ctx.state.user || ctx.params.id != ctx.state.user.id)
       return ctx.respond(403, Responses.NO_ACCESS_USER);
@@ -98,13 +117,11 @@ class UserController {
     if (user) {
       user.points += body.points;
       user.save();
-      let response: UserType = user.toNormalization();
+      let response: Object = {user: true};
       return ctx.respond(200, response);
     } else {
       return ctx.respond(400, Responses.POINTS_UNDEFINED);
     }
-
-
   };
 };
 

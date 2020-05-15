@@ -142,6 +142,29 @@ class UserRouter {
     },
     handler: [HELPER.validation, USER_CONTROLLER.read_all],
   };
+
+  public static exists: Spec = {
+    method: HELPER.methods.GET,
+    path: "/user/exists/:id",
+    validate: {
+      continueOnError: true,
+      output: Object.assign(
+        {},
+        HELPER.errorResponse(403),
+        HELPER.errorResponse(400),
+        HELPER.validationErrorResponse(),
+        {
+          200: {
+            body: JOI.object({
+              code: 200,
+              data: JOI.object(),
+            }).options({ stripUnknown: true }),
+          },
+        }
+      ),
+    },
+    handler: [HELPER.validation, USER_CONTROLLER.exists],
+  };
 };
 
 export default UserRouter;
