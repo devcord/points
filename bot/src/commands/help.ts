@@ -13,7 +13,7 @@ export class HelpCommand implements Command {
   }
 
   async run(commandContext: CommandContext): Promise<void> {
-    let allowedCommands = this.commands.filter(command => command.hasPermissionToRun(commandContext));
+    const allowedCommands = this.commands.filter(command => command.hasPermissionToRun(commandContext));
     if (commandContext.args.length == 0) {
       // No command specified, give the user a list of all commands they can use.
       const commandNames = allowedCommands.map(command => command.commandNames[0]);

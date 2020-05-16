@@ -1,36 +1,36 @@
-import { BaseContext, Middleware as KoaMiddleware} from 'koa';
-import { Responses, JwtFunctionResponse} from './../types/';
+import { BaseContext, Middleware as KoaMiddleware } from 'koa';
+import { Responses, JwtFunctionResponse } from './../types/';
 import JWT from './../lib/jwt';
 
 /**
  * @param secret - The JWT Secret
  * @returns Returns a function for Koa middleware injection
 */
-type JwtFunction           = (secret: string) => JwtFunctionResponse;
-type AuthorizationFunction = (ctx: BaseContext) => string|null;
+type JwtFunction = (secret: string) => JwtFunctionResponse;
+type AuthorizationFunction = (ctx: BaseContext) => string | null;
 
 class Middleware {
-  private static resolveAuthorizationHeader:AuthorizationFunction = (ctx: BaseContext) => {
+  private static resolveAuthorizationHeader: AuthorizationFunction = (ctx: BaseContext) => {
     if (!ctx.header || !ctx.header.authorization) {
       return;
     }
-  
+
     const PARTS = ctx.header.authorization.split(' ');
 
     if (PARTS.length === 2) {
-      const SCHEME:string      = PARTS[0];
-      const CREDENTIALS:string = PARTS[1];
-  
+      const SCHEME: string = PARTS[0];
+      const CREDENTIALS: string = PARTS[1];
+
       if (/^Bearer$/i.test(SCHEME)) {
         return CREDENTIALS;
       }
     }
-  
+
     return null;
   };
 
-  public static jwt:JwtFunction = (secret) => {
-    const Jwt = new JWT({secret});
+  public static jwt: JwtFunction = (secret) => {
+    const Jwt = new JWT({ secret });
 
     class JwtClass {
       public static middleware = async (ctx: BaseContext, next: Function) => {
@@ -40,7 +40,6 @@ class Middleware {
 
       public static authenticate = async (ctx: BaseContext, next: Function) => {
         const token = Middleware.resolveAuthorizationHeader(ctx);
-      
 
         if (token !== null) {
           const decodedToken: { id: string } | null = await Jwt.verify(token).catch(err => null);
@@ -59,14 +58,14 @@ class Middleware {
     return JwtClass;
   };
 
-  public static respond:KoaMiddleware = async (ctx: BaseContext, next: Function) => {
+  public static respond: KoaMiddleware = async (ctx: BaseContext, next: Function) => {
     /**
      * @param status - The http code
      * @param body - An Object or string input depending on the http code
     */
-    ctx.respond = (status: number, body: object|string) => {
-      ctx.status        = status;
-      let error:boolean = false;
+    ctx.respond = (status: number, body: object | string) => {
+      ctx.status = status;
+      let error = false;
 
       if (status >= 299 || status < 200) {
         error = true;
@@ -75,12 +74,12 @@ class Middleware {
       if (error === true) {
         ctx.body = {
           code: ctx.status,
-          error: (Array.isArray(body)) ? body : {message: body}    
+          error: (Array.isArray(body)) ? body : { message: body }
         };
       } else {
         ctx.body = {
           code: ctx.status,
-          data: (typeof body === 'object') ? body : (Array.isArray(body)) ? body : {message: body}
+          data: (typeof body === 'object') ? body : (Array.isArray(body)) ? body : { message: body }
         };
       }
 
@@ -89,8 +88,8 @@ class Middleware {
 
     await next();
   };
-  
-  public static onError:KoaMiddleware = async (ctx: BaseContext, next: Function) => {
+
+  public static onError: KoaMiddleware = async (ctx: BaseContext, next: Function) => {
     try {
       await next();
     } catch (err) {
@@ -98,6 +97,6 @@ class Middleware {
       ctx.respond(500, Responses.INTERNAL_ERROR);
     }
   };
-};
+}
 
 export default Middleware;

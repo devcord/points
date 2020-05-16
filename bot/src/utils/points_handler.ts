@@ -1,117 +1,162 @@
 import { Message, User } from "discord.js";
-import { Command } from "../commands/command";
-import { CommandContext } from "../models/command_context";
-import { HelpCommand } from "../commands/help";
-import { reactor } from "../reactions/reactor";
 import { config } from "../config/config";
 import { UserType } from "../types"
 import * as jwt from "jsonwebtoken";
 import axios from "axios";
+import { resolve } from "path";
 
 
 const API_URL = config.apiUrl;
 
 /** Handler for points */
 export class PointsHandler {
-         private readonly prefix: string;
+  private readonly prefix: string;
 
-         constructor(prefix: string) {
-           this.prefix = prefix;
-         }
+  constructor(prefix: string) {
+    this.prefix = prefix;
+  }
 
-         /* Handles points if it is not by a bot and its not a command */
-         async handleMessage(message: Message): Promise<void> {
-           if (message.author.bot || this.isCommand(message)) {
-             return;
-           }
-
-           let user = await this.get_user(message.author);
-           if (user) {
-             let points = 1 * this.get_multiplier(message);
-             user.points = points;
-             this.update_user(user);
-           } else {
-             throw new Error("Something what terribly wrong!");
-           }
-         }
-
-         /** Determines whether or not a message is a user command. */
-         private isCommand(message: Message): boolean {
-           return message.content.startsWith(this.prefix);
-         }
-
-         private apiClient = axios.create({
-           baseURL: API_URL,
-           responseType: "json",
-           headers: {
-             "Content-Type": "application/json",
-           },
-         });
-
-         private async get_user(user: User): Promise<UserType> {
-           let token = this.get_token(user.id);
-
-           this.apiClient.interceptors.request.use((c) => {
-             c.headers.get["Authorization"] = "Bearer " + token;
-             return c;
-           });
-
-           try {
-             const resp = await this.apiClient.get("/user/" + user.id);
-             let u: UserType = resp.data.data;
-             return u;
-           } catch (e) {
-             if (e && e.response) {
-               if (e.response.data.code == 400) {
-                 return this.create_user(user);
-               } else {
-                 // Error
-                 console.error(e.response.data);
-               }
-             }
-           }
-         }
-
-         private async create_user(user: User): Promise<UserType> {
-           let u: UserType = { id: user.id, points: 0 };
-
-           try {
-             const resp = await this.apiClient.post<UserType>("/user", u);
-             return resp.data;
-           } catch (e) {
-             if (e && e.response) console.error(e.response.data);
-             else throw e;
-           }
-         }
-
-         private async update_user(user: UserType): Promise<UserType> {
-           let token = this.get_token(user.id);
-
-           this.apiClient.interceptors.request.use((c) => {
-             c.headers.post["Authorization"] = "Bearer " + token;
-             return c;
-           });
-
-           try {
-             const resp = await this.apiClient.post(`/user/${user.id}/points`, user);
-             let u = resp.data.data;
-             return u;
-           } catch (e) {
-             if (e && e.response) console.error(e.response.data);
-             else throw e;
-           }
-
-         }
-
-         private get_multiplier(message: Message): number {
-           let n = 1;
+  /* Handles points if it is not by a bot and its not a command */
+  async handleMessage(message: Message): Promise<void> {
+    if (message.author.bot || this.isCommand(message)) {
+      return;
+    }
+    // this.clearHeaders();
 
 
-           return n;
-         }
+    if (config.thanksKeywords.some((t) =>
+      message.content.toLowerCase().includes(t)
+    )) {
+      //  Thanks message
+      this.handleThanks(message);
+    } else {
+      this.givePoints(message.author, this.getMultiplier(message)).catch(err => console.log(err));
+    }
+  }
 
-         private get_token(id: string): string {
-           let token: string = jwt.sign({ id }, config.jwtSecret);
-           return token;
-         }
-       }
+  /** Determines whether or not a message is a user command. */
+  private isCommand(message: Message): boolean {
+    return message.content.startsWith(this.prefix);
+  }
+
+  private apiClient = axios.create({
+    baseURL: API_URL,
+    responseType: "json",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+
+  private clearHeaders(): void {
+    this.apiClient.interceptors.request.use((c) => {
+      c.headers.clear();
+      c.headers.get["Content-Type"] = "application/json";
+      c.headers.post["Content-Type"] = "application/json";
+      return c;
+    });
+  }
+
+  private async getUser(user: User): Promise<UserType | void> {
+    const token = this.getToken(user.id);
+
+    try {
+      const resp = await axios(config.apiUrl + '/user/' + user.id, { method: "GET", headers: { 'Content-Type': 'application/json', "Authorization": "Bearer " + token } });
+      return resp.data.data;
+    } catch ({ response }) {
+      const {
+        status,
+        data,
+        config: { url },
+      }: {
+        status: number;
+        data: string | object;
+        config: {
+          url: string;
+        };
+        } = response;
+      
+      if (status == 404) {
+        // user doesn't exist time to create user
+        return this.createUser(user);
+       }else {
+        throw {
+          status,
+          data,
+          url,
+        }
+      }
+    }
+  }
+
+  private async createUser(user: User): Promise<UserType | void> {
+    const u: UserType = { id: user.id, points: 0 };
+
+    try {
+       const resp = await axios(config.apiUrl + '/user/', { method: "POST", data: u, headers: { 'Content-Type': 'application/json'}});
+      return resp.data.data;
+    } catch (e) {
+      if (e && e.response) console.error(e.response.data);
+      else throw e;
+    }
+  }
+
+  private async updateUser(user: UserType): Promise<UserType> {
+    const token = this.getToken(user.id);
+
+
+    try {
+      const resp = await axios(config.apiUrl + '/user/' + user.id + '/points', { method: "POST", data: user, headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token } });
+      return resp.data.data;
+    } catch (e) {
+      if (e && e.response) console.error(e.response.data);
+      else throw e;
+    }
+
+  }
+
+  private getMultiplier(message: Message): number {
+    const channelId: string = message.channel.id;
+    const multiplierIds: string[] = Object.keys(config.multipliers);
+
+
+    if (multiplierIds.includes(channelId)) {
+      return config.multipliers[channelId];
+    } else {
+      return 1;
+    }
+  }
+  private async handleThanks(message: Message): Promise<void> {
+
+    const thankees = message.mentions.members.filter(
+      (thankee) => thankee !== undefined
+    );
+
+    if (thankees.size > 0) {
+      const thanker = message.author;
+      if (thankees.map(thankee => thankee.user.id).includes(thanker.id)) {
+        message.reply('you cannot thank yourself!');
+      }
+
+      thankees.filter(thankee => thankee.user.id !== thanker.id);
+
+      thankees.forEach(thankee => {
+        this.givePoints(thankee.user, config.multipliers['thanks']).catch(err => console.log(err));
+      })
+    }
+  }
+
+  private async givePoints(u: User, amount: number): Promise<void> {
+    const user = await this.getUser(u);
+    if (user) {
+      user.points = amount;
+      this.updateUser(user);
+    } else {
+      console.log("User is undefined");
+    }
+  }
+
+  private getToken(id: string): string {
+    const token: string = jwt.sign({ id }, config.jwtSecret);
+    return token;
+  }
+}

@@ -30,4 +30,7 @@ function validateConfig(config: BotConfig) {
   if (!config.token) {
     throw new Error("You need to specify your Discord bot token!");
   }
+  if (Object.keys(config.multipliers).length == 0) {
+    throw new Error("You need to specify multiplier values for the channels");
+  }
 }
