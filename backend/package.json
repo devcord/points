@@ -16,7 +16,8 @@
     "start": "env-cmd -f ./deploy.env ts-node ./src/index.ts",
     "test": "jest --forceExit --coverage --verbose --detectOpenHandles",
     "watch": "echo \"This is now deprecated, please use dev\" && exit 1",
-    "dev": "env-cmd -f ./config.env nodemon --watch 'src/**/*' -e ts,tsx --exec ts-node ./src/index.ts"
+    "_dev": "env-cmd -f ./config.env nodemon --watch 'src/**/*' -e ts,tsx --exec ts-node ./src/index.ts",
+    "dev": "env-cmd -f ./config.env ts-node-dev ."
   },
   "engines": {
     "node": "12.x.x"
@@ -60,6 +61,7 @@
     "supertest": "^4.0.2",
     "ts-jest": "^24.3.0",
     "ts-node": "^8.8.1",
+    "ts-node-dev": "^1.0.0-pre.44",
     "typedoc": "^0.15.8",
     "typescript": "^3.8.3"
   }

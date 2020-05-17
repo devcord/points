@@ -1,31 +1,36 @@
 import MONGOOSE from 'mongoose';
+import PointModel, { PointDocument, PointType } from "./point";
 
 type toNormalizationFunction = () => UserType;
 
 export type UserDocument = MONGOOSE.Document & {
-  id: string
-  points: number,
-  toNormalization: toNormalizationFunction
+  id: string;
+  totalPoints: number;
+  points: string[];
+  toNormalization: toNormalizationFunction;
 };
 
 export type UserType = {
-  id: string | null,
-  points: number | null,
+  id: string | null;
+  totalPoints: number | null;
+  points: string[];
 };
 
 const userSchema = new MONGOOSE.Schema(
   {
     id: { type: String, unique: true, required: true },
-    points: { type: Number, default: 0 },
+    totalPoints: { type: Number, default: 0 },
+    points: { type: Array, required: false},
   },
   { timestamps: true }
 );
 
 const toNormalization: toNormalizationFunction = function () {
-  let _userObject: UserDocument = this.toObject();
+  const _userObject: UserDocument = this.toObject();
 
-  let UserObject: UserType = {
+  const UserObject: UserType = {
     id: _userObject.id,
+    totalPoints: _userObject.totalPoints,
     points: _userObject.points,
   };
 

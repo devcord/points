@@ -5,7 +5,8 @@ import { HelpCommand } from "../commands/help";
 import { reactor } from "../reactions/reactor";
 import { config } from "../config/config";
 
-import { TopCommand } from "../commands/top";
+// import { TopCommand } from "../commands/top";
+import { PointsCommand } from "../commands/points";
 
 /** Handler for bot commands issued by users. */
 export class CommandHandler {
@@ -15,7 +16,7 @@ export class CommandHandler {
 
   constructor(prefix: string) {
     const commandClasses = [
-      TopCommand,
+      PointsCommand,
       // TODO: Add more commands here.
     ];
 

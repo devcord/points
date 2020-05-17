@@ -12,6 +12,7 @@ class Db {
       useNewUrlParser: true,
       useUnifiedTopology: true,
       useCreateIndex: true,
+      useFindAndModify: false,
     })
       .then(() => { console.log(`Connected to MongoDB at ${config.mongo_uri}`); })
       .catch((err) => {

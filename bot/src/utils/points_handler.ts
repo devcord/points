@@ -21,8 +21,6 @@ export class PointsHandler {
     if (message.author.bot || this.isCommand(message)) {
       return;
     }
-    // this.clearHeaders();
-
 
     if (config.thanksKeywords.some((t) =>
       message.content.toLowerCase().includes(t)
@@ -30,6 +28,7 @@ export class PointsHandler {
       //  Thanks message
       this.handleThanks(message);
     } else {
+      // Give points based off of location
       this.givePoints(message.author, this.getMultiplier(message)).catch(err => console.log(err));
     }
   }
@@ -46,15 +45,6 @@ export class PointsHandler {
       "Content-Type": "application/json",
     },
   });
-
-  private clearHeaders(): void {
-    this.apiClient.interceptors.request.use((c) => {
-      c.headers.clear();
-      c.headers.get["Content-Type"] = "application/json";
-      c.headers.post["Content-Type"] = "application/json";
-      return c;
-    });
-  }
 
   private async getUser(user: User): Promise<UserType | void> {
     const token = this.getToken(user.id);
@@ -89,7 +79,7 @@ export class PointsHandler {
   }
 
   private async createUser(user: User): Promise<UserType | void> {
-    const u: UserType = { id: user.id, points: 0 };
+    const u: UserType = { id: user.id, totalPoints: 0 };
 
     try {
        const resp = await axios(config.apiUrl + '/user/', { method: "POST", data: u, headers: { 'Content-Type': 'application/json'}});
@@ -102,7 +92,6 @@ export class PointsHandler {
 
   private async updateUser(user: UserType): Promise<UserType> {
     const token = this.getToken(user.id);
-
 
     try {
       const resp = await axios(config.apiUrl + '/user/' + user.id + '/points', { method: "POST", data: user, headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token } });
@@ -148,7 +137,7 @@ export class PointsHandler {
   private async givePoints(u: User, amount: number): Promise<void> {
     const user = await this.getUser(u);
     if (user) {
-      user.points = amount;
+      user.totalPoints = amount;
       this.updateUser(user);
     } else {
       console.log("User is undefined");

@@ -7,7 +7,8 @@ import USER_CONTROLLER from '../controller/user';
 class UserRouter {
   private static userOutput: SchemaMap = {
     id: JOI.string(),
-    points: JOI.number(),
+    totalPoints: JOI.number(),
+    points: JOI.array(),
   };
 
   public static points: Spec = {
@@ -18,7 +19,7 @@ class UserRouter {
       type: HELPER.contentType.JSON,
       body: JOI.object({
         id: JOI.string().required(),
-        points: JOI.number().integer().required(),
+        totalPoints: JOI.number().integer().required(),
       }).options({ stripUnknown: true }),
       output: Object.assign(
         {},
@@ -45,7 +46,7 @@ class UserRouter {
       type: HELPER.contentType.JSON,
       body: JOI.object({
         id: JOI.string().alphanum().required(),
-        points: JOI.number().integer(),
+        totalPoints: JOI.number().integer(),
       }).options({ stripUnknown: true }),
       output: Object.assign(
         {},
@@ -75,7 +76,7 @@ class UserRouter {
       }),
       body: JOI.object({
         id: JOI.string().alphanum().required(),
-        points: JOI.number().integer(),
+        totalPoints: JOI.number().integer(),
       }).options({ stripUnknown: true }),
       output: Object.assign(
         {},
@@ -165,6 +166,6 @@ class UserRouter {
     },
     handler: [HELPER.validation, USER_CONTROLLER.exists],
   };
-};
+}
 
 export default UserRouter;
