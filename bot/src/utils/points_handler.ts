@@ -116,7 +116,7 @@ export class PointsHandler {
   }
   private async handleThanks(message: Message): Promise<void> {
 
-    const thankees = message.mentions.members.filter(
+    let thankees = message.mentions.members.filter(
       (thankee) => thankee !== undefined
     );
 
@@ -126,7 +126,7 @@ export class PointsHandler {
         message.reply('you cannot thank yourself!');
       }
 
-      thankees.filter(thankee => thankee.user.id !== thanker.id);
+      thankees = thankees.filter(thankee => thankee.user.id !== thanker.id);
 
       thankees.forEach(thankee => {
         this.givePoints(thankee.user, config.multipliers['thanks']).catch(err => console.log(err));
