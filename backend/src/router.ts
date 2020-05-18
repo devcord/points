@@ -24,6 +24,7 @@ class Router {
     
     publicRouter.route(POINT_ROUTES.read);
     publicRouter.route(POINT_ROUTES.read_days);
+    publicRouter.route(POINT_ROUTES.top_days);
 
     publicRouter.route(HEALTH_ROUTES.read);
 

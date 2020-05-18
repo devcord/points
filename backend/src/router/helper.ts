@@ -27,9 +27,9 @@ class Helper {
     if (ctx.invalid) {
       const body: { details: Array<object> } = ctx.invalid.body || ctx.invalid.query || ctx.invalid.params;
       const response: Array<object | undefined | null> = body && body.details ? body.details : [];
-
       ctx.respond(412, response)
     } else {
+      console.log('validation is complete now')
       return await next();
     }
   };

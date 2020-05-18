@@ -45,12 +45,4 @@ export class PointsCommand implements Command {
 
     return p;
   }
-
-  
-  
-  private getToken(id: string): string {
-    const token: string = jwt.sign({ id }, config.jwtSecret);
-    return token;
-  }
-  
 }

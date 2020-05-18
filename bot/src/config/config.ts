@@ -26,7 +26,7 @@ export type BotConfig = {
 
 export const config: BotConfig = {
   token: process.env.TOKEN || "", 
-  prefix: process.env.prefix || ";",
+  prefix: process.env.PREFIX || ";",
   botOwnerRoleName: process.env.BOT_OWNER_ROLE_NAME || "Staff",
   enableReactions: false,
   apiUrl: process.env.API_URL || "",
