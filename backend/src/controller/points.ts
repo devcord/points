@@ -42,7 +42,6 @@ class PointController {
   }
 
   public static top_days = async (ctx: ModifiedContext): Promise<void> => {
-    console.log('function called');
     const date = new Date(Date.now() - ctx.params.days * 24 * 60 * 60 * 1000);
 
     const points: PointDocument[] | null = await PointModel.find({

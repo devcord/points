@@ -33,7 +33,7 @@ class PointRouter {
 
   public static read_days: Spec = {
     method: HELPER.methods.GET,
-    path: "/points/:id/:days",
+    path: "/points/user/:id/:days",
     validate: {
       continueOnError: true,
       params: JOI.object({
@@ -75,14 +75,14 @@ class PointRouter {
           200: {
             body: JOI.object({
               code: 200,
-              data: JOI.array(),
+              data: JOI.any(),
             }).options({ stripUnknown: true }),
           },
         }
       ),
     },
     handler: [HELPER.validation, POINT_CONTROLLER.top_days],
-  }
+  };
 
 }
 

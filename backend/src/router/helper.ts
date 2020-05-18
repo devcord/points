@@ -29,7 +29,6 @@ class Helper {
       const response: Array<object | undefined | null> = body && body.details ? body.details : [];
       ctx.respond(412, response)
     } else {
-      console.log('validation is complete now')
       return await next();
     }
   };

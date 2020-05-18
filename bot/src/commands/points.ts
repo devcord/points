@@ -1,31 +1,38 @@
-import { User } from "discord.js";
+import { User, Message } from "discord.js";
 import { Command } from "./command";
 import { CommandContext } from "../models/command_context";
 import { config } from "../config/config"
-import * as jwt from "jsonwebtoken";
 import axios from "axios";
 
 export class PointsCommand implements Command {
-  commandNames: string[] = ["points", "point"];
+  commandNames: string[] = ["points", "point", "p"];
 
   getHelpMessage(commandPrefix: string): string {
-    return `Use ${commandPrefix + this.commandNames[0]} {days} to get the amount of points you have had in the past # of days.`
+    return `Use ${commandPrefix + this.commandNames[0]} {days} {user} to get the amount of points you or a user have had in the past # of days.`
   }
 
   async run(parsedUserCommand: CommandContext): Promise<void> {
-    // Where the command is run from
-    let days;
-    
-    if (parsedUserCommand.args.length > 0) {
-     days = parsedUserCommand.args[0];
-    } else {
-      days = "7";
-    }
+    const args = parsedUserCommand.args;
+    const message = parsedUserCommand.originalMessage;
 
-    const user: User = parsedUserCommand.originalMessage.author;
+    const days = (args.length > 0) ? args[0] : "7";
+    const user = (args.length <= 1) ? message.author : message.mentions.users.first();
+
+    this.sendEmbed(message, user, days);    
+  }
+
+  private async sendEmbed(message: Message, user: User, days: string) {
+    const embed = {
+      title: 'Points - ' + days + ' days',
+      color: this.randomColor,
+      // eslint-disable-next-line @typescript-eslint/camelcase
+      author: { name: this.getName(message.author, message.author.id), icon_url: message.author.avatarURL },
+      description: ''
+    };
 
     const points = await this.getPointsDays(days, user.id)
-    await parsedUserCommand.originalMessage.reply(` you have ${points} points from the past ${days} days`);
+    embed.description = `<@${user.id}> - ${points}`;
+    return await message.channel.send({ embed });
   }
 
   hasPermissionToRun(parsedUserCommand: CommandContext): boolean {
@@ -34,7 +41,7 @@ export class PointsCommand implements Command {
   
   private async getPointsDays(days: string, userID: string): Promise<number> {
     let p = 0;
-    const resp = await axios(config.apiUrl + '/points/' + userID + '/' + days, { method: "GET", headers: { 'Content-Type': 'application/json' } });
+    const resp = await axios(config.apiUrl + '/points/user/' + userID + '/' + days, { method: "GET", headers: { 'Content-Type': 'application/json' } });
   
     const points = resp.data.data;
 
@@ -45,4 +52,20 @@ export class PointsCommand implements Command {
 
     return p;
   }
+
+  private getName = (user: any, id: string): string => {
+    if (user !== undefined) {
+      // If he the user has a 'user' field (read: is a member), return the nickname or user.username. Otherwise, return the user.username.
+      return Object.prototype.hasOwnProperty.call(user, 'user')
+        ? user.nickname
+          ? user.nickname
+          : user.user.username
+        : user.username
+    } else {
+      return `<@${id}>`
+    }
+  }
+
+  private randomColor = Math.floor(Math.random() * 16777215).toString(16);
+
 }
