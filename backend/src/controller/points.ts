@@ -47,7 +47,6 @@ class PointController {
     const points: PointDocument[] | null = await PointModel.find({
       createdAt: {$gte: date.toISOString()},
     });
-    console.log(points.length)
     if(points){
 
       const p: Record<string, number> = {};
