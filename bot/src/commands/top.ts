@@ -51,7 +51,7 @@ export class TopCommand implements Command {
       sortable.sort((a, b) => {
         return a[1] - b[1];
       });
-      const top = sortable.reverse().slice(0, 9);
+      const top = sortable.reverse().slice(0, 10);
       return top;
     } catch (e) {
       throw new Error(e);
@@ -71,5 +71,5 @@ export class TopCommand implements Command {
     }
   }
 
-  private randomColor = Math.floor(Math.random() * 16777215).toString(16);
+  private randomColor = () => Math.floor(Math.random() * 16777215).toString(16);
 }

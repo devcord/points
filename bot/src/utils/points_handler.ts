@@ -128,37 +128,39 @@ export class PointsHandler {
 
       thankees = thankees.filter(thankee => thankee.user.id !== thanker.id);
 
-      thankees.forEach(thankee => {
-        this.givePoints(thankee.user, config.multipliers['thanks']).catch(err => console.log(err));
-      })
+      if(thankees.length != 0){
+        thankees.forEach(thankee => {
+          this.givePoints(thankee.user, config.multipliers['thanks']).catch(err => console.log(err));
+        })
 
 
-      const thankeesArray = thankees.array();
-      let thankeesString = "";
-      if (thankeesArray.length === 1) {
-        thankeesString = `${thankeesArray[0]} `
-      } else if (thankeesArray.length === 2) {
-        thankeesString = `${thankeesArray[0]} & ${thankeesArray[1]} `
-      } else {
-        // Loop through the thankees and depending on what position, add it with the proper separator.
-        let iterator = 0
-        for (const thankee of thankeesArray) {
-          thankeesString += thankeesArray.length === ++iterator
-            ? `& ${thankee}`
-            : `${thankee},`
-        }
-      }
-
-      message.channel.send({
-        embed: {
-          title: `Thanks received!`,
-          color: this.randomColor,
-          description: `${thankeesString} ${thankeesArray.length === 1 ? 'has' : 'have'} been thanked by ${thanker}!`,
-          footer: {
-            text: 'Use "thanks @user" to give someone rep, and ".rep @user" to see how much they have!'
+        const thankeesArray = thankees.array();
+        let thankeesString = "";
+        if (thankeesArray.length === 1) {
+          thankeesString = `${thankeesArray[0]} `
+        } else if (thankeesArray.length === 2) {
+          thankeesString = `${thankeesArray[0]} & ${thankeesArray[1]} `
+        } else {
+          // Loop through the thankees and depending on what position, add it with the proper separator.
+          let iterator = 0
+          for (const thankee of thankeesArray) {
+            thankeesString += thankeesArray.length === ++iterator
+              ? `& ${thankee}`
+              : `${thankee},`
           }
         }
-      })
+
+        message.channel.send({
+          embed: {
+            title: `Thanks received!`,
+            color: this.randomColor(),
+            description: `${thankeesString} ${thankeesArray.length === 1 ? 'has' : 'have'} been thanked by ${thanker}!`,
+            footer: {
+              text: 'Use "thanks @user" to give someone rep, and ";points @user" to see how much they have!'
+            }
+          }
+        })
+      }
     }
   }
 
@@ -177,6 +179,7 @@ export class PointsHandler {
     return token;
   }
 
-  private randomColor = Math.floor(Math.random() * 16777215).toString(16);
+  private randomColor= () => Math.floor(Math.random() * 16777215).toString(16);
+
 
 }
