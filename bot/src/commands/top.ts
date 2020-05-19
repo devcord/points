@@ -28,7 +28,7 @@ export class TopCommand implements Command {
   private async sendLeaderboard(message: Message, top: Array<Array<string>>, days: number): Promise<Message> {
     const embed = {
       title: 'Leaderboard - ' + days + ' days',
-      color: this.randomColor,
+      color: this.randomColor(),
       // eslint-disable-next-line @typescript-eslint/camelcase
       author: {name: this.getName(message.author, message.author.id), icon_url: message.author.avatarURL},
       description: ''
@@ -71,5 +71,6 @@ export class TopCommand implements Command {
     }
   }
 
-  private randomColor = () => Math.floor(Math.random() * 16777215).toString(16);
+  private randomColor() { return Math.floor(Math.random() * 16777215).toString(16); }
+
 }

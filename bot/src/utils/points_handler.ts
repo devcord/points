@@ -178,8 +178,6 @@ export class PointsHandler {
     const token: string = jwt.sign({ id }, config.jwtSecret);
     return token;
   }
-
-  private randomColor= () => Math.floor(Math.random() * 16777215).toString(16);
-
+  private randomColor() { return Math.floor(Math.random() * 16777215).toString(16); }
 
 }

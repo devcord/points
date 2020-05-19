@@ -24,7 +24,7 @@ export class PointsCommand implements Command {
   private async sendEmbed(message: Message, user: User, days: string) {
     const embed = {
       title: 'Points - ' + days + ' days',
-      color: this.randomColor,
+      color: this.randomColor(),
       // eslint-disable-next-line @typescript-eslint/camelcase
       author: { name: this.getName(message.author, message.author.id), icon_url: message.author.avatarURL },
       description: ''
@@ -65,7 +65,7 @@ export class PointsCommand implements Command {
       return `<@${id}>`
     }
   }
+  private randomColor() { return Math.floor(Math.random() * 16777215).toString(16); }
 
-  private randomColor = () => Math.floor(Math.random() * 16777215).toString(16);
 
 }
