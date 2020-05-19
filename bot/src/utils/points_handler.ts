@@ -127,14 +127,14 @@ export class PointsHandler {
       }
 
       thankees = thankees.filter(thankee => thankee.user.id !== thanker.id);
+      const thankeesArray = thankees.array();
 
-      if(thankees.length != 0){
+      if (thankeesArray.length != 0){
         thankees.forEach(thankee => {
           this.givePoints(thankee.user, config.multipliers['thanks']).catch(err => console.log(err));
         })
 
 
-        const thankeesArray = thankees.array();
         let thankeesString = "";
         if (thankeesArray.length === 1) {
           thankeesString = `${thankeesArray[0]} `
