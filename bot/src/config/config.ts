@@ -60,5 +60,5 @@ export const config: BotConfig = {
     '664280781509885972': 5,
     'thanks': 10,
   },
-  thanksKeywords: ["thanks", "thank", "thunk", "kudos"],
+  thanksKeywords: ["thx", "thank", "thunk", "kudos"],
 };
