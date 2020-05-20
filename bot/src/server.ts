@@ -33,7 +33,7 @@ const pointsHandler = new PointsHandler(config.prefix);
 const client = new Discord.Client();
 
 client.on("ready", () => {
-  console.log("Bot has started");
+  console.log(`Bot has started as ${client.user.tag}`);
 });
 
 client.on("message", (message: Message) => {

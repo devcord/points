@@ -15,9 +15,9 @@ export class TopCommand implements Command {
     // await this.getTopSevenDays();
     const args = parsedUserCommand.args;
     if(args.length > 0){
-      this.sendLeaderboard(parsedUserCommand.originalMessage, await this.getTopDays(parseInt(args[0])), parseInt(args[0]));
+      this.sendLeaderboard(parsedUserCommand.originalMessage, parseInt(args[0]));
     } else {
-      this.sendLeaderboard(parsedUserCommand.originalMessage, await this.getTopDays(7), 7);
+      this.sendLeaderboard(parsedUserCommand.originalMessage,  7);
     }
     }
 
@@ -25,19 +25,24 @@ export class TopCommand implements Command {
     return true;
   }
 
-  private async sendLeaderboard(message: Message, top: Array<Array<string>>, days: number): Promise<Message> {
+  private async sendLeaderboard(message: Message, days: number): Promise<Message> {
     const embed = {
       title: 'Leaderboard - ' + days + ' days',
       color: this.randomColor(),
       // eslint-disable-next-line @typescript-eslint/camelcase
-      author: {name: this.getName(message.author, message.author.id), icon_url: message.author.avatarURL},
-      description: ''
+      author: { name: this.getName(message.author, message.author.id), icon_url: message.author.avatarURL },
+      description: 'Loading...'
     };
+
+    const msg = await message.channel.send({ embed });
+
+    const top = await this.getTopDays(days);
+
     embed.description = top.map((p, i) =>
       `${i + 1}) **${this.getName(message.guild.members.cache.find(m => m.id === p[0]), p[0])}** has ${p[1]} reputation`
     ).join('\n');
 
-    return await message.channel.send({ embed });
+    return await msg.edit({ embed });
   }
 
   private async getTopDays(days: number): Promise<string[][]>{

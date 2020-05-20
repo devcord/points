@@ -4,6 +4,7 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
+    "dev": "ts-node-dev ./src/server.ts",
     "build": "tsc",
     "watch": "tsc -w",
     "serve": "node ./dist/server.js"
@@ -22,6 +23,7 @@
     "@typescript-eslint/parser": "^2.33.0",
     "eslint": "^7.0.0",
     "ts-node": "^8.10.1",
+    "ts-node-dev": "^1.0.0-pre.44",
     "typescript": "^3.9.2"
   }
 }
