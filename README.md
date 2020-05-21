@@ -10,7 +10,7 @@
 #### This is a bot made by the [devcord discord server](https://discord.gg/devcord) with the discord.js javascript library.
 
 This is how the bot works:
-Every message that you send gives you points! For all messages sent on our server in the help category you get **5 points** per message. If a members thanks you, the bot will try to detect whom he/she thanked and give **10 points** to the person. All other messages are 1 point a piece.
+Every message that you send gives you points! For all messages sent on our server in the help category you get **5 points** per message. If a members thanks you, the bot will try to detect whom he/she thanked and give **1000 points** to the person. All other messages are 1 point a piece.
 
 ## Contribution
 
@@ -52,5 +52,5 @@ git push origin <branch name>
 
 -   At last, thank you for contributing to our repository!
 <br><br><br>
-<p><i>You received 10 points, README.md thanked you!</i></p>
+<p><i>You received 1000 points, README.md thanked you!</i></p>
 
