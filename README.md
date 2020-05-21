@@ -10,7 +10,7 @@
 #### This is a bot made by the [devcord discord server](https://discord.gg/devcord) with the discord.js javascript library.
 
 This is how the bot works:
-Every message that you send gives you points! For all messages sent on our server in the help category you get **5 points** per message. If a members thanks you, the bot will try to detect whom he/she thanked and give **1000 points** to the person. All other messages are 1 point a piece.
+Every message that you send gives you points! For all messages sent on our server in the help category you get **5 points** per message. If a members thanks you, the bot will try to detect whom he/she thanked and give **10 points** to the person. All other messages are 1 point a piece.
 
 ## Contribution
 
@@ -39,8 +39,7 @@ git add .
 git commit -m "<A short description about your changes>"
 git push origin <branch name>
 ```
-![image](https://user-images.githubusercontent.com/65149574/82423392-6ac71480-9aa3-11ea-88d1-5b621cfb2e6a.png)
-
+![image](https://user-images.githubusercontent.com/65149574/82521220-c34eee00-9b45-11ea-9a42-e83c55cb6883.png)
 -   Now if you've completed all of these steps, head over to `https://github.com/<your username>/points/tree/<branch name>`
     <br>You will see a popup that looks like the image below. Click on "Compare and Pull Request".
 ![image](https://user-images.githubusercontent.com/65149574/82421021-2dad5300-9aa0-11ea-986b-8b00cc40fddf.png)
@@ -53,4 +52,5 @@ git push origin <branch name>
 
 -   At last, thank you for contributing to our repository!
 <br><br><br>
-<p><i>You received 1000 points, README.md thanked you!</i></p>
+<p><i>You received 10 points, README.md thanked you!</i></p>
+
