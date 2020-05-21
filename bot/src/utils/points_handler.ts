@@ -21,10 +21,16 @@ export class PointsHandler {
     if (message.author.bot || this.isCommand(message)) {
       return;
     }
-
-    if (config.thanksKeywords.some((t) =>
-      message.content.toLowerCase().includes(t)
-    )) {
+    
+    /*
+     * Test if any line converted to lowercase matches
+     * one of the keywords and doesn't start with >
+     */
+    if (
+      new RegExp(
+        `^[^\n>]*(${config.thanksKeywords.join('|')})`,
+        'gim').test(message.content)
+    ) {
       //  Thanks message
       this.handleThanks(message);
     } else {
