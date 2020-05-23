@@ -14,7 +14,7 @@ Every message that you send gives you points! For all messages sent on our serve
 
 ## Contribution
 
-This is an open source repository, meaning we allow you to contribute on our repository and beautify it! You can fork this repository and clone it on your local machine through git. When you want to submit changes, you can create a pr and if your changes to the repository looks good, one of the moderators will accept the request and merge the changes into the repository. Still confused? Follow these steps:
+This is an open source repository, meaning we allow you to contribute on our repository and beautify it! You can fork this repository and clone it on your local machine through git. When you want to submit changes, you can create a pr and if your changes to the repository looks good, one of the moderators will accept the request and merge the changes into the repository. Confused? Follow these steps:
 
 -   Fork this repository. This will create a copy of this repository on your account which will be used to make a pull request in the future.
 ![image](https://user-images.githubusercontent.com/65149574/82423087-060bba00-9aa3-11ea-9cbc-5575f308d3e8.png)
@@ -41,10 +41,10 @@ git push origin <branch name>
 ```
 ![image](https://user-images.githubusercontent.com/65149574/82521220-c34eee00-9b45-11ea-9a42-e83c55cb6883.png)
 -   Now if you've completed all of these steps, head over to `https://github.com/<your username>/points/tree/<branch name>`
-    <br>You will see a popup that looks like the image below. Click on "Compare and Pull Request".
+    <br>You will see a popup that looks like the image below. Click on "Compare & pull request".
 ![image](https://user-images.githubusercontent.com/65149574/82421021-2dad5300-9aa0-11ea-986b-8b00cc40fddf.png)
 
-- You will get redirected a page that looks like the image below. You are can describe your changes explicitly so that the moderator viewing your pull request can understand it. Once done, click on `Create pull request`. Be explicit about the changes you made, unlike the example below!
+- You will get redirected a page that looks like the image below. You can describe your changes explicitly so that the moderator viewing your pull request can understand it. Once done, click on `Create pull request`. Be explicit about the changes you made, unlike the example below!
 ![image](https://user-images.githubusercontent.com/65149574/82422639-6c440d00-9aa2-11ea-9f41-540ba5abf3ad.png)
 
 -   Now, a moderator will have a look at your changes and if it looks good, he/she will accept your changes and merge it to the official repository or request some changes if he/she thinks it is a bit off and github will send you an email notifying you, as shown in the image below.
