@@ -1,4 +1,4 @@
-import { Message } from "discord.js";
+import { EmojiResolvable, Message } from "discord.js";
 import { Command } from "./command";
 import { CommandContext } from "../models/command_context";
 import { config } from "../config/config";
@@ -12,7 +12,6 @@ export class TopCommand implements Command {
   }
 
   async run(parsedUserCommand: CommandContext): Promise<void> {
-    // await this.getTopSevenDays();
     const args = parsedUserCommand.args;
     if(args.length > 0){
       this.sendLeaderboard(parsedUserCommand.originalMessage, parseInt(args[0]));
@@ -25,7 +24,7 @@ export class TopCommand implements Command {
     return true;
   }
 
-  private async sendLeaderboard(message: Message, days: number): Promise<Message> {
+  private async sendLeaderboard(message: Message, days: number): Promise<void | Message> {
     const embed = {
       title: 'Leaderboard - ' + days + ' days',
       color: this.randomColor(),
@@ -36,13 +35,19 @@ export class TopCommand implements Command {
 
     const msg = await message.channel.send({ embed });
 
-    const top = await this.getTopDays(days);
+   await this.getTopDays(days).then(async (top) =>{
 
     embed.description = top.map((p, i) =>
       `${i + 1}) **${this.getName(message.guild.members.cache.find(m => m.id === p[0]), p[0])}** has ${p[1]} reputation`
     ).join('\n');
 
     return await msg.edit({ embed });
+   }).catch(() => {
+     msg.delete();
+     message.react('❌');
+     message.reply(this.getHelpMessage(config.prefix));
+     return null;
+   })
   }
 
   private async getTopDays(days: number): Promise<string[][]>{
@@ -59,7 +64,7 @@ export class TopCommand implements Command {
       const top = sortable.reverse().slice(0, 10);
       return top;
     } catch (e) {
-      throw new Error(e);
+      return Promise.reject(e);
     }
   }
 
