@@ -1,4 +1,4 @@
-import { EmojiResolvable, Message } from "discord.js";
+import { Message } from "discord.js";
 import { Command } from "./command";
 import { CommandContext } from "../models/command_context";
 import { config } from "../config/config";

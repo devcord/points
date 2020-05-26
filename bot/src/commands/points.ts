@@ -12,12 +12,27 @@ export class PointsCommand implements Command {
   }
 
   async run(parsedUserCommand: CommandContext): Promise<void> {
-    const args = parsedUserCommand.args;
+    const _args = parsedUserCommand.args;
     const message = parsedUserCommand.originalMessage;
+    const userRegex = /<@!\d*>/gm;
+    let args: string[];
+    let user: User;
+    const days = '7';
 
-    const days = (args.length > 0) ? args[0] : "7";
-    const user = (args.length <= 1) ? message.author : message.mentions.users.first();
-
+    _args.forEach(arg => {
+      if (!(userRegex.test(arg))) {
+        args.push(arg);
+      }
+    });
+    
+    if (message.mentions.users.array().length > 0) {
+      user = message.mentions.users.first();
+    } else {
+      user = message.author;
+    }
+  
+    console.log(_args, user);
+      
     this.sendEmbed(message, user, days);    
   }
 
