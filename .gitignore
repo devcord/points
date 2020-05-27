@@ -119,3 +119,7 @@ dist
 
 # ENV's
 *.env
+
+# MongoDB dump
+dump/
+backend/config.prod.env

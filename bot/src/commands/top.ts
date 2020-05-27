@@ -12,7 +12,6 @@ export class TopCommand implements Command {
   }
 
   async run(parsedUserCommand: CommandContext): Promise<void> {
-    // await this.getTopSevenDays();
     const args = parsedUserCommand.args;
     if(args.length > 0){
       this.sendLeaderboard(parsedUserCommand.originalMessage, parseInt(args[0]));
@@ -25,7 +24,7 @@ export class TopCommand implements Command {
     return true;
   }
 
-  private async sendLeaderboard(message: Message, days: number): Promise<Message> {
+  private async sendLeaderboard(message: Message, days: number): Promise<void | Message> {
     const embed = {
       title: 'Leaderboard - ' + days + ' days',
       color: this.randomColor(),
@@ -36,36 +35,44 @@ export class TopCommand implements Command {
 
     const msg = await message.channel.send({ embed });
 
-    const top = await this.getTopDays(days);
+   await this.getTopDays(days).then(async (top) =>{
 
     embed.description = top.map((p, i) =>
       `${i + 1}) **${this.getName(message.guild.members.cache.find(m => m.id === p[0]), p[0])}** has ${p[1]} reputation`
     ).join('\n');
 
     return await msg.edit({ embed });
+   }).catch(() => {
+     msg.delete();
+     message.react('❌');
+     return null;
+   })
   }
 
   private async getTopDays(days: number): Promise<string[][]>{
     try {
       const resp = await axios(config.apiUrl + '/points/top/' + days, { method: 'GET', headers: { 'Content-Type': 'application/json' } });
+
       const points = resp.data.data;
       const sortable = [];
       for (const user in points) {
-        sortable.push([user, points[user]]);
+        sortable.push([points[user]['_id'], points[user]['value']]);
       }
+
       sortable.sort((a, b) => {
         return a[1] - b[1];
       });
+
       const top = sortable.reverse().slice(0, 10);
       return top;
     } catch (e) {
-      throw new Error(e);
+      return Promise.reject(e);
     }
   }
 
   private getName = (user: any, id: string): string => {
     if (user !== undefined) {
-      // If he the user has a 'user' field (read: is a member), return the nickname or user.username. Otherwise, return the user.username.
+      // If the user has a 'user' field (read: is a member), return the nickname or user.username. Otherwise, return the user.username.
       return Object.prototype.hasOwnProperty.call(user, 'user')
         ? user.nickname
           ? user.nickname
@@ -76,6 +83,6 @@ export class TopCommand implements Command {
     }
   }
 
-  private randomColor() { return Math.floor(Math.random() * 16777215).toString(16); }
+  private randomColor(): string { return Math.floor(Math.random() * 16777215).toString(16); }
 
 }

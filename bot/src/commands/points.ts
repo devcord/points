@@ -30,9 +30,14 @@ export class PointsCommand implements Command {
       description: ''
     };
 
-    const points = await this.getPointsDays(days, user.id)
-    embed.description = `<@${user.id}> - ${points}`;
-    return await message.channel.send({ embed });
+    this.getPointsDays(days, user.id).then((points) => {
+      embed.description = `<@${user.id}> - ${points}`;
+      return message.channel.send({ embed });
+    }).catch(() => {
+      message.react('❌');
+      return null;
+    })
+
   }
 
   hasPermissionToRun(parsedUserCommand: CommandContext): boolean {
