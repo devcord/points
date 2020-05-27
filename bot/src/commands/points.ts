@@ -12,27 +12,12 @@ export class PointsCommand implements Command {
   }
 
   async run(parsedUserCommand: CommandContext): Promise<void> {
-    const _args = parsedUserCommand.args;
+    const args = parsedUserCommand.args;
     const message = parsedUserCommand.originalMessage;
-    const userRegex = /<@!\d*>/gm;
-    let args: string[];
-    let user: User;
-    const days = '7';
 
-    _args.forEach(arg => {
-      if (!(userRegex.test(arg))) {
-        args.push(arg);
-      }
-    });
-    
-    if (message.mentions.users.array().length > 0) {
-      user = message.mentions.users.first();
-    } else {
-      user = message.author;
-    }
-  
-    console.log(_args, user);
-      
+    const days = (args.length > 0) ? args[0] : "7";
+    const user = (args.length <= 1) ? message.author : message.mentions.users.first();
+
     this.sendEmbed(message, user, days);    
   }
 
@@ -45,9 +30,14 @@ export class PointsCommand implements Command {
       description: ''
     };
 
-    const points = await this.getPointsDays(days, user.id)
-    embed.description = `<@${user.id}> - ${points}`;
-    return await message.channel.send({ embed });
+    this.getPointsDays(days, user.id).then((points) => {
+      embed.description = `<@${user.id}> - ${points}`;
+      return message.channel.send({ embed });
+    }).catch(() => {
+      message.react('❌');
+      return null;
+    })
+
   }
 
   hasPermissionToRun(parsedUserCommand: CommandContext): boolean {

@@ -45,7 +45,6 @@ export class TopCommand implements Command {
    }).catch(() => {
      msg.delete();
      message.react('❌');
-     message.reply(this.getHelpMessage(config.prefix));
      return null;
    })
   }
@@ -53,14 +52,17 @@ export class TopCommand implements Command {
   private async getTopDays(days: number): Promise<string[][]>{
     try {
       const resp = await axios(config.apiUrl + '/points/top/' + days, { method: 'GET', headers: { 'Content-Type': 'application/json' } });
+
       const points = resp.data.data;
       const sortable = [];
       for (const user in points) {
-        sortable.push([user, points[user]]);
+        sortable.push([points[user]['_id'], points[user]['value']]);
       }
+
       sortable.sort((a, b) => {
         return a[1] - b[1];
       });
+
       const top = sortable.reverse().slice(0, 10);
       return top;
     } catch (e) {
@@ -70,7 +72,7 @@ export class TopCommand implements Command {
 
   private getName = (user: any, id: string): string => {
     if (user !== undefined) {
-      // If he the user has a 'user' field (read: is a member), return the nickname or user.username. Otherwise, return the user.username.
+      // If the user has a 'user' field (read: is a member), return the nickname or user.username. Otherwise, return the user.username.
       return Object.prototype.hasOwnProperty.call(user, 'user')
         ? user.nickname
           ? user.nickname
@@ -81,6 +83,6 @@ export class TopCommand implements Command {
     }
   }
 
-  private randomColor() { return Math.floor(Math.random() * 16777215).toString(16); }
+  private randomColor(): string { return Math.floor(Math.random() * 16777215).toString(16); }
 
 }
