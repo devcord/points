@@ -38,7 +38,7 @@ export class TopCommand implements Command {
    await this.getTopDays(days).then(async (top) =>{
 
     embed.description = top.map((p, i) =>
-      `${i + 1}) **${this.getName(message.guild.members.cache.find(m => m.id === p[0]), p[0])}** has ${p[1]} reputation`
+      `${i}) **${this.getName(message.guild.members.cache.find(m => m.id === p[0]), p[0])}** has ${p[1]} reputation`
     ).join('\n');
 
     return await msg.edit({ embed });
