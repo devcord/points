@@ -22,6 +22,8 @@ export type BotConfig = {
   multipliers: any;
 /* Thanks keywords */
   thanksKeywords: string[];
+/* Debug mode */
+  debug: boolean;
 };
 
 export const config: BotConfig = {
@@ -61,4 +63,5 @@ export const config: BotConfig = {
     'thanks': 10,
   },
   thanksKeywords: ["thanks", "thank", "thunk", "kudos"],
+  debug: process.env.NODE_ENV == "development" ? true : false,
 };
