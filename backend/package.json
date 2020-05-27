@@ -17,7 +17,8 @@
     "test": "jest --forceExit --coverage --verbose --detectOpenHandles",
     "watch": "echo \"This is now deprecated, please use dev\" && exit 1",
     "_dev": "env-cmd -f ./config.env nodemon --watch 'src/**/*' -e ts,tsx --exec ts-node ./src/index.ts",
-    "dev": "env-cmd -f ./config.env ts-node-dev ."
+    "dev": "env-cmd -f ./config.env ts-node-dev .",
+    "dev-prod": "env-cmd -f ./config.prod.env ts-node-dev ."
   },
   "engines": {
     "node": "12.x.x"

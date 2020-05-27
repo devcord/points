@@ -1,6 +1,7 @@
 import MONGOOSE from 'mongoose';
 
 type toNormalizationFunction = () => PointType;
+type mapFunction = () => PointType[];
 
 export type PointDocument = MONGOOSE.Document & {
   amount: number;

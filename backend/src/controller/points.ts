@@ -41,36 +41,30 @@ class PointController {
     }
   }
 
+
   public static top_days = async (ctx: ModifiedContext): Promise<void> => {
     const date = new Date(Date.now() - ctx.params.days * 24 * 60 * 60 * 1000);
 
-    const points: PointDocument[] | null = await PointModel.find({
-      createdAt: {$gte: date.toISOString()},
-    });
-    if(points){
 
-      const p: Record<string, number> = {};
+    /* TODO: Type all of this */
+    const o = {};
+    o.map = function () { emit(this.userID, this.amount) };
+    o.reduce = function (k, vals) { return Array.sum(vals); };
+    o.query = {
+      createdAt: { $gte: date.toISOString() },
+    };
+    o.resolveToObject = true;
 
-      const cache: string[] = [];
-      
-      for(let i = 0; i < points.length; ++i){
-        const point: PointDocument = points[i];
-        const userID: string = point.userID;
-        if(!cache.includes(point.userID)){
-          p[userID] = point.amount;
-          cache.push(userID);
-        } else {
-          p[userID] += point.amount;
-        }
-      }
-
-      return ctx.respond(200, p);
-    } else {
+    const res = await PointModel.mapReduce(o);
+    const { results } = res;
+    if (results.length === 0) {
       return ctx.respond(404, Responses.NOT_FOUND);
+    } else {
+      return ctx.respond(200, results)
     }
+
+
   }
-
-
 }
 
 export default PointController;
