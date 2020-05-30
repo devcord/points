@@ -3,7 +3,6 @@ import { config } from "../config/config";
 import { UserType } from "../types"
 import * as jwt from "jsonwebtoken";
 import axios from "axios";
-import { resolve } from "path";
 
 
 const API_URL = config.apiUrl;
@@ -30,7 +29,7 @@ export class PointsHandler {
     } else {
       // Give points based off of location
       if(!config.debug){
-        this.givePoints(message.author, this.getMultiplier(message)).catch(err => console.log(err));
+        this.givePoints(message.author, this.getMultiplier(message), 'message').catch(err => console.log(err));
       }
     }
   }
@@ -92,11 +91,11 @@ export class PointsHandler {
     }
   }
 
-  private async updateUser(user: UserType): Promise<UserType> {
+  private async updateUser(user: UserType, type: string): Promise<UserType> {
     const token = this.getToken(user.id);
 
     try {
-      const resp = await axios(config.apiUrl + '/user/' + user.id + '/points', { method: "POST", data: user, headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token } });
+      const resp = await axios(config.apiUrl + '/user/' + user.id + '/points/' + type, { method: "POST", data: user, headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token } });
       return resp.data.data;
     } catch (e) {
       if (e && e.response) console.error(e.response.data);
@@ -133,7 +132,7 @@ export class PointsHandler {
 
       if (thankeesArray.length != 0){
         thankees.forEach(thankee => {
-          this.givePoints(thankee.user, config.multipliers['thanks']).catch(err => console.log(err));
+          this.givePoints(thankee.user, config.multipliers['thanks'], 'thanks').catch(err => console.log(err));
         })
 
 
@@ -166,11 +165,11 @@ export class PointsHandler {
     }
   }
 
-  private async givePoints(u: User, amount: number): Promise<void> {
+  private async givePoints(u: User, amount: number, type: string): Promise<void> {
     const user = await this.getUser(u);
     if (user) {
       user.totalPoints = amount;
-      this.updateUser(user);
+      this.updateUser(user, type);
     } else {
       console.log("User is undefined");
     }
