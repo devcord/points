@@ -13,7 +13,7 @@ class UserRouter {
 
   public static points: Spec = {
     method: HELPER.methods.POST || HELPER.methods.PUT,
-    path: "/user/:id/points/",
+    path: "/user/:id/points/:type",
     validate: {
       continueOnError: true,
       type: HELPER.contentType.JSON,

@@ -95,8 +95,6 @@ class UserController {
 
     const body: InputUpdateBodyType = ctx.request.body;
 
-    
-
     const user: UserDocument | null = await UserModel.findOneAndUpdate({
       id: body.id,
     }, {
@@ -109,6 +107,7 @@ class UserController {
       PointModel.create({
         amount: body.totalPoints,
         userID: user.id,
+        type: ctx.params.type,
       }).catch(() => ctx.throw(400, Responses.CANT_CREATE_POINT)).then(res => {
         user.points.push(res._id.toString());
         user.save();
