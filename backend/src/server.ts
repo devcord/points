@@ -7,7 +7,9 @@ import HELMET from 'koa-helmet';
 import ROUTER from './router';
 import DB from './db';
 import MIDDLEWARE from './middleware/';
-import {JwtFunctionResponse} from './types/';
+import { JwtFunctionResponse } from './types/';
+import * as path from 'path';
+import * as fs from 'fs';
 
 class Server {
   protected app: KOA;
@@ -36,11 +38,18 @@ class Server {
     return this;
   }
 
-  protected middleware (): Server {
+  protected middleware(): Server {
     this.use(MIDDLEWARE.respond);
     this.use(MIDDLEWARE.onError);
     this.use(this.jwt().middleware)
-    this.use(MORGAN('dev'));
+
+    this.use(MORGAN('dev', {
+      skip: function (req, res) { return res.statusCode < 400 }
+    }))    
+    this.use(MORGAN('common', {
+      stream: fs.createWriteStream(path.join(__dirname, '../logs/access.log'), { flags: 'a' })
+    }))
+    
     this.use(HELMET());
     this.use(CORS());
     return this;
