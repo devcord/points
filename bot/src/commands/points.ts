@@ -16,7 +16,7 @@ export class PointsCommand implements Command {
     const message = parsedUserCommand.originalMessage;
 
     const days = (args.length > 0) ? args[0] : "7";
-    const user = (args.length <= 1) ? message.author : message.mentions.users.first();
+    const user = (args.length <= 1) ? message.author : message.mentions.users.first() : message.guild.members.cache.find(m => m.user.username === args.join(' ')) : message.guild.members.cache.find(m => m.user.id === args.join(' '));
 
     this.sendEmbed(message, user, days);    
   }
