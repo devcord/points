@@ -8,7 +8,8 @@
     "dev-db": "NODE_ENV=db ts-node-dev ./src/server.ts",
     "build": "tsc",
     "watch": "tsc -w",
-    "serve": "node ./dist/server.js"
+    "serve": "node ./dist/server.js",
+    "lint": "eslint src/**/* --fix"
   },
   "dependencies": {
     "axios": "^0.19.2",
