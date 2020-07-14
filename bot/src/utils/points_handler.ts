@@ -147,7 +147,7 @@ export class PointsHandler {
             color: this.randomColor(),
             description: `${thankeesString} ${thankeesArray.length === 1 ? 'has' : 'have'} been thanked by ${thanker}!`,
             footer: {
-              text: 'Use "thanks @user" to give someone rep, and ";points @user" to see how much they have!'
+              text: 'Use "thanks @user" to give someone rep, and ";points {# of days} @user" to see how much they have!'
             }
           }
         })
