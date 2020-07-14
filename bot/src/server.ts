@@ -33,9 +33,9 @@ const pointsHandler = new PointsHandler(config.prefix);
 const client = new Discord.Client();
 
 client.on("ready", () => {
-  if (config.debug) {
+/*   if (config.debug) {
     console.log("BOT IS IN DEBUG MODE. NOTHING WILL BE PUSHED TO THE DB");
-  }
+  } */
   console.log(`Bot has started as ${client.user.tag}`);
 });
 

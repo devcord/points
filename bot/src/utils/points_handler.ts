@@ -26,9 +26,9 @@ export class PointsHandler {
       this.handleThanks(message);
     } else {
       // Give points based off of location
-      if(!config.debug){
+      // if(!config.debug){
         this.givePoints(message.author, this.getMultiplier(message), 'message').catch(err => console.log(err));
-      }
+      // }
     }
   }
 

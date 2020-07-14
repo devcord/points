@@ -2,6 +2,11 @@ import * as dotenv from "dotenv";
 
 dotenv.config();
 
+
+interface MultipliersType {
+  [propName: string]: number;
+}
+
 /**
  * Discord bot config.
  */
@@ -19,7 +24,7 @@ export type BotConfig = {
 /* JWT secret */
   jwtSecret: string;
 /* Multipliers */
-  multipliers: any;
+  multipliers: MultipliersType;
 /* Thanks keywords */
   thanksKeywords: string[];
 /* Debug mode */

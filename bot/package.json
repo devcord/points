@@ -5,7 +5,7 @@
   "license": "MIT",
   "scripts": {
     "dev": "ts-node-dev ./src/server.ts",
-    "dev-db": "NODE_ENV=db ts-node-dev ./src/server.ts",
+    "dev-db": "set NODE_ENV=\"db\" ts-node-dev ./src/server.ts",
     "build": "tsc",
     "watch": "tsc -w",
     "serve": "node ./dist/server.js",

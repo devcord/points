@@ -1,4 +1,4 @@
-import { User, Message } from "discord.js";
+import { User, Message, MessageReaction } from "discord.js";
 import { Command } from "./command";
 import { CommandContext } from "../models/command_context";
 import { config } from "../config/config"
@@ -21,7 +21,7 @@ export class PointsCommand implements Command {
     this.sendEmbed(message, user, days);    
   }
 
-  private async sendEmbed(message: Message, user: User, days: string) {
+  private async sendEmbed(message: Message, user: User, days: string): Promise<Message | MessageReaction> {
     const embed = {
       title: 'Points - ' + days + ' days',
       color: this.randomColor(),
@@ -30,17 +30,15 @@ export class PointsCommand implements Command {
       description: ''
     };
 
-    this.getPointsDays(days, user.id).then((points) => {
+    return this.getPointsDays(days, user.id).then((points) => {
       embed.description = `<@${user.id}> - ${points}`;
       return message.channel.send({ embed });
     }).catch(() => {
-      message.react('❌');
-      return null;
+      return message.react('❌');
     })
-
   }
 
-  hasPermissionToRun(parsedUserCommand: CommandContext): boolean {
+  hasPermissionToRun(): boolean {
     return true;
   }
   
@@ -70,7 +68,7 @@ export class PointsCommand implements Command {
       return `<@${id}>`
     }
   }
-  private randomColor() { return Math.floor(Math.random() * 16777215).toString(16); }
+  private randomColor(): string { return Math.floor(Math.random() * 16777215).toString(16); }
 
 
 }

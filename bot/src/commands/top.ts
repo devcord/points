@@ -20,7 +20,7 @@ export class TopCommand implements Command {
     }
     }
 
-  hasPermissionToRun(parsedUserCommand: CommandContext): boolean {
+  hasPermissionToRun(): boolean {
     return true;
   }
 
@@ -73,6 +73,8 @@ export class TopCommand implements Command {
   private getName = (user: any, id: string): string => {
     if (user !== undefined) {
       // If the user has a 'user' field (read: is a member), return the nickname or user.username. Otherwise, return the user.username.
+      
+      // NOTE: We do some weird parsing here, ignore this
       return Object.prototype.hasOwnProperty.call(user, 'user')
         ? user.nickname
           ? user.nickname

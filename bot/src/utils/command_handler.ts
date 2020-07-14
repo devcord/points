@@ -18,7 +18,6 @@ export class CommandHandler {
     const commandClasses = [
       PointsCommand,
       TopCommand,
-      // TODO: Add more commands here.
     ];
 
     this.commands = commandClasses.map(commandClass => new commandClass());
@@ -41,6 +40,7 @@ export class CommandHandler {
       // await message.reply(`I don't recognize that command. Try ${config.prefix}help.`);
       // await reactor.failure(message);
       // Do nothing for now
+      return;
     } else if (!allowedCommands.includes(matchedCommand)) {
       await message.reply(
         `You aren't allowed to use that command. Try ${config.prefix}help.`
@@ -49,7 +49,7 @@ export class CommandHandler {
     } else {
       await matchedCommand.run(commandContext).then(() => {
           reactor.success(message);
-        }).catch(reason => {
+        }).catch(() => {
           reactor.failure(message);
         });
     }
@@ -60,5 +60,4 @@ export class CommandHandler {
     return message.content.startsWith(this.prefix);
   }
 
-  
 }

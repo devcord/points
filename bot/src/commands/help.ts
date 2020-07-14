@@ -1,5 +1,4 @@
 import { Command } from "./command";
-import { Message } from "discord.js";
 import { CommandContext } from "../models/command_context";
 import {config} from "../config/config"
 
@@ -37,11 +36,11 @@ export class HelpCommand implements Command {
     return `${command.getHelpMessage(context.commandPrefix)}\nCommand aliases: ${command.commandNames.join(", ")}`;
   }
 
-  hasPermissionToRun(commandContext: CommandContext): boolean {
+  hasPermissionToRun(): boolean {
     return true;
   }
 
-  getHelpMessage(commandPrefix: string) {
+  getHelpMessage(): string {
     return "I think you already know how to use this command...";
   }
 }
