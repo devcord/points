@@ -1,11 +1,9 @@
-import { Message, User } from "discord.js";
+import { Message, User, GuildMember } from "discord.js";
 import { config } from "../config/config";
 import { UserType } from "../types"
 import * as jwt from "jsonwebtoken";
 import axios from "axios";
 
-
-const API_URL = config.apiUrl;
 
 /** Handler for points */
 export class PointsHandler {
@@ -38,14 +36,6 @@ export class PointsHandler {
   private isCommand(message: Message): boolean {
     return message.content.startsWith(this.prefix);
   }
-
-  private apiClient = axios.create({
-    baseURL: API_URL,
-    responseType: "json",
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
 
   private async getUser(user: User): Promise<UserType | void> {
     const token = this.getToken(user.id);
@@ -115,23 +105,23 @@ export class PointsHandler {
       return 1;
     }
   }
-  private async handleThanks(message: Message): Promise<void> {
 
+  private async handleThanks(message: Message): Promise<void> {
     let thankees = message.mentions.members.filter(
-      (thankee) => thankee !== undefined
+      (thankee: GuildMember) => thankee !== undefined
     );
 
     if (thankees.size > 0) {
       const thanker = message.author;
-      if (thankees.map(thankee => thankee.user.id).includes(thanker.id)) {
+      if (thankees.map((thankee: GuildMember) => thankee.user.id).includes(thanker.id)) {
         message.reply('you cannot thank yourself!');
       }
 
-      thankees = thankees.filter(thankee => thankee.user.id !== thanker.id);
+      thankees = thankees.filter((thankee: GuildMember) => thankee.user.id !== thanker.id);
       const thankeesArray = thankees.array();
 
       if (thankeesArray.length != 0){
-        thankees.forEach(thankee => {
+        thankees.forEach((thankee: GuildMember) => {
           this.givePoints(thankee.user, config.multipliers['thanks'], 'thanks').catch(err => console.log(err));
         })
 
@@ -179,6 +169,7 @@ export class PointsHandler {
     const token: string = jwt.sign({ id }, config.jwtSecret);
     return token;
   }
-  private randomColor() { return Math.floor(Math.random() * 16777215).toString(16); }
+  
+  private randomColor(): string { return Math.floor(Math.random() * 16777215).toString(16); }
 
 }
