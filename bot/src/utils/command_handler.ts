@@ -7,6 +7,7 @@ import { config } from "../config/config";
 
 import { TopCommand } from "../commands/top";
 import { PointsCommand } from "../commands/points";
+import { HealthCommand } from "../commands/health";
 
 /** Handler for bot commands issued by users. */
 export class CommandHandler {
@@ -18,6 +19,7 @@ export class CommandHandler {
     const commandClasses = [
       PointsCommand,
       TopCommand,
+      HealthCommand
     ];
 
     this.commands = commandClasses.map(commandClass => new commandClass());
