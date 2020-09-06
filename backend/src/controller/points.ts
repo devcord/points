@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import { Responses, ModifiedContext } from './../types';
 
 import PointModel, { PointDocument, PointType } from './../model/point';
