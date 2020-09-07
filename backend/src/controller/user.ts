@@ -17,7 +17,7 @@ type InputUpdateBodyType = { id: string; totalPoints: number; points: PointType[
 
 class UserController {
   public static create = async (ctx: ModifiedContext): Promise<void> => {
-    const body: InputCreateBodyType = ctx.request.body;
+    const body: UserDocument = ctx.request.body;
 
     await UserModel.create(body).catch(
       () => ctx.throw(500, Responses.CANT_CREATE_USER)
@@ -106,8 +106,8 @@ class UserController {
     if (user) {
       PointModel.create({
         amount: body.totalPoints,
-        userID: user.id,
-        type: ctx.params.type,
+        userID: user.id as string,
+        type: ctx.params.type as string,
       }).catch(() => ctx.throw(400, Responses.CANT_CREATE_POINT)).then(res => {
         user.points.push(res._id.toString());
         user.save();

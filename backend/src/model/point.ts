@@ -7,8 +7,8 @@ export type PointDocument = MONGOOSE.Document & {
   userID: string;
   amount: number;
   type: string;
-  toNormalization: toNormalizationFunction;
-  date: string;
+  toNormalization?: toNormalizationFunction;
+  date?: string;
 };
 
 export type PointType = {
