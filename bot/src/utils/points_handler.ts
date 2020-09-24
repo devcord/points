@@ -19,10 +19,26 @@ export class PointsHandler {
       return;
     }
 
-    if (config.thanksKeywords.some((t) =>
-      message.content.toLowerCase().includes(t)
-    )) {
-      //  Thanks message
+    /**
+     * Removes any quoted lines inside the `message`
+     * @param {string} message The full message
+     * @returns {string} The original message but without any quoted lines
+     */
+    const removeQuotes = (message: string): string => message
+      .split('\n')
+      .filter(line => !line.startsWith('> '))
+      .join('\n');
+
+    /**
+     * Checks for a "thanks" keyword inside a message
+     * @param {string} message The full message
+     * @returns {boolean} True if the message has any of the "thanks" keywords, False otherwise
+     */
+    const hasThanks = (message: string): boolean => config.thanksKeywords.some(
+      word => removeQuotes(message).toLowerCase().includes(word)
+    );
+
+    if (hasThanks(message.content)) {
       this.handleThanks(message);
     } else {
       // Give points based off of location
@@ -55,7 +71,7 @@ export class PointsHandler {
           url: string;
         };
         } = response;
-      
+
       if (status == 404) {
         // user doesn't exist time to create user
         return this.createUser(user);
@@ -169,7 +185,7 @@ export class PointsHandler {
     const token: string = jwt.sign({ id }, config.jwtSecret);
     return token;
   }
-  
+
   private randomColor(): string { return Math.floor(Math.random() * 16777215).toString(16); }
 
 }
