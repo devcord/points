@@ -32,7 +32,7 @@ async function getUser(uid) {
   } catch ({ response }) {
     const { status, data } = response;
     if (status == 404) {
-      // user doesn't exist time to create user
+      // user doesn't exist, time to create user
       return await createUser(uid);
     }
     throw {
@@ -62,21 +62,15 @@ async function givePoints(u, amount) {
   if (user) {
     user.totalPoints = amount;
     updateUser(user);
-  } else {
-    console.log("User is undefined");
-  }
+  } else console.log("User is undefined");
 }
 
 function getToken(id) {
-  const token = jwt.sign({ id }, process.env.SECRET);
-  return token;
+  return jwt.sign({ id }, process.env.SECRET);
 }
 
 async function updateUser(user) {
-  // console.log(user);
-
   const token = getToken(user.id);
-
   try {
     const resp = await axios(process.env.API + "/user/" + user.id + "/points", {
       method: "POST",
