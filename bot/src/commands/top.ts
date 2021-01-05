@@ -38,7 +38,7 @@ export class TopCommand implements Command {
    await this.getTopDays(days).then(async (top) =>{
 
     embed.description = top.map((p, i) =>
-      `${i + 1}) **${this.getName(message.guild.members.cache.find(m => m.id === p[0]), p[0])}** has ${p[1]} reputation`
+      `${i + 1}) <@${p[0]}> has ${p[1]} reputation`
     ).join('\n');
 
     return await msg.edit({ embed });
@@ -67,21 +67,6 @@ export class TopCommand implements Command {
       return top;
     } catch (e) {
       return Promise.reject(e);
-    }
-  }
-
-  private getName = (user: any, id: string): string => {
-    if (user !== undefined) {
-      // If the user has a 'user' field (read: is a member), return the nickname or user.username. Otherwise, return the user.username.
-      
-      // NOTE: We do some weird parsing here, ignore this
-      return Object.prototype.hasOwnProperty.call(user, 'user')
-        ? user.nickname
-          ? user.nickname
-          : user.user.username
-        : user.username
-    } else {
-      return `<@${id}>`
     }
   }
 
