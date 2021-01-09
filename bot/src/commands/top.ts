@@ -29,7 +29,7 @@ export class TopCommand implements Command {
       title: 'Leaderboard - ' + days + ' days',
       color: this.randomColor(),
       // eslint-disable-next-line @typescript-eslint/camelcase
-      author: { name: this.getName(message.author, message.author.id), icon_url: message.author.avatarURL },
+      // author: { name:  message.author.id, icon_url: message.author.avatarURL },
       description: 'Loading...'
     };
 
@@ -42,29 +42,19 @@ export class TopCommand implements Command {
     ).join('\n');
 
     return await msg.edit({ embed });
-   }).catch(() => {
+    }).catch((err) => {
+    console.error(err);
      msg.delete();
      message.react('❌');
      return null;
    })
   }
 
-  private async getTopDays(days: number): Promise<string[][]>{
+  private async getTopDays(days: number): Promise<{userId: string; total: number}[]>{
     try {
       const { data } = await axios(config.apiUrl + '/points/top/' + days, { method: 'GET', headers: { 'Content-Type': 'application/json' } });
 
-//       const points = resp.data.data;
-//       const sortable = [];
-//       for (const user in points) {
-//         sortable.push([points[user]['_id'], points[user]['total']]);
-//       }
-
-//       sortable.sort((a, b) => {
-//         return a[1] - b[1];
-//       });
-
-//       const top = sortable.reverse().slice(0, 10);
-      return data.data;
+	return data.data;
     } catch (e) {
       return Promise.reject(e);
     }

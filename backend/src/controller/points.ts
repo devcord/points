@@ -17,7 +17,7 @@ type InputCreateBodyType = { id: string; totalPoints: number; points: PointType[
 type InputUpdateBodyType = { id: string; totalPoints: number; points: PointType[] };
 
 class PointController {
- 
+
   public static read = async (ctx: ModifiedContext): Promise<void> => {
     const points: PointDocument[] | null = await PointModel.find({ userID: ctx.params.id });
 
@@ -30,7 +30,7 @@ class PointController {
 
   public static read_days = async (ctx: ModifiedContext): Promise<void> => {
     const date = new Date(Date.now() - ctx.params.days * 24 * 60 * 60 * 1000);
-    
+
     const points: PointDocument[] | null = await PointModel.find({
       userID: ctx.params.id,
       createdAt: { $gte: date.toISOString() }
@@ -48,38 +48,35 @@ class PointController {
     const date = new Date(Date.now() - ctx.params.days * 24 * 60 * 60 * 1000);
 
 
-    /* TODO: Type all of this */
-    const pipeline = [
-     {
-       '$match': {
-         'date': {
-           '$gte': date.toISOString()
-         }
-       }
-     }, {
-       '$group': {
-         '_id': '$userID', 
-         'total': {
-           '$sum': '$amount'
-         }
-       }
-     }, {
-       '$sort': {
-         'total': -1
-       }
-     }, {
-       '$limit': 10
-     }
-   ];
-    
-    const { results } = await PointModel.aggregate(pipeline);
+    let results = await PointModel.aggregate([{
+      '$match': {
+        'date': {
+          '$gte': date
+        }
+      }
+    }, {
+      '$group': {
+        '_id': '$userID',
+        'total': {
+          '$sum': '$amount'
+        }
+      }
+    }, {
+      '$sort': {
+        'total': -1
+      }
+    }, {
+      '$limit': 10
+    }]).exec();
+
+
     if (results.length === 0) return ctx.respond(404, Responses.NOT_FOUND);
 
     results = results.map(e => {
-     return { userId: e.id, total: e.total };
+      return { userId: e._id, total: e.total };
     });
-   
-   return ctx.respond(200, results);
+
+    return ctx.respond(200, results);
 
   }
 }
