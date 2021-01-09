@@ -21,9 +21,9 @@ export type PointType = {
 
 const pointSchema = new MONGOOSE.Schema(
   {
-    date: { type: Date, default: Date.now },
-    userID: { type: String, required: true },
-    type: { type: String, required: true},
+    date: { type: Date, default: Date.now, index: true },
+    userID: { type: String, required: true, index: true },
+    type: { type: String, required: true },
     amount: { type: Number, required: true },
   },
   { timestamps: true }
