@@ -38,7 +38,7 @@ export class TopCommand implements Command {
    await this.getTopDays(days).then(async (top) =>{
 
     embed.description = top.map((p, i) =>
-      `${i + 1}) <@${p[0]}> has ${p[1]} reputation`
+      `${i + 1}) <@${p.userId}> has ${p.total} reputation`
     ).join('\n');
 
     return await msg.edit({ embed });
@@ -51,20 +51,20 @@ export class TopCommand implements Command {
 
   private async getTopDays(days: number): Promise<string[][]>{
     try {
-      const resp = await axios(config.apiUrl + '/points/top/' + days, { method: 'GET', headers: { 'Content-Type': 'application/json' } });
+      const { data } = await axios(config.apiUrl + '/points/top/' + days, { method: 'GET', headers: { 'Content-Type': 'application/json' } });
 
-      const points = resp.data.data;
-      const sortable = [];
-      for (const user in points) {
-        sortable.push([points[user]['_id'], points[user]['value']]);
-      }
+//       const points = resp.data.data;
+//       const sortable = [];
+//       for (const user in points) {
+//         sortable.push([points[user]['_id'], points[user]['total']]);
+//       }
 
-      sortable.sort((a, b) => {
-        return a[1] - b[1];
-      });
+//       sortable.sort((a, b) => {
+//         return a[1] - b[1];
+//       });
 
-      const top = sortable.reverse().slice(0, 10);
-      return top;
+//       const top = sortable.reverse().slice(0, 10);
+      return data.data;
     } catch (e) {
       return Promise.reject(e);
     }
