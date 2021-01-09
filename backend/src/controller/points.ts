@@ -72,7 +72,7 @@ class PointController {
      }
    ];
     
-    const { results } = await PointsModel.aggregate(pipeline);
+    const { results } = await PointModel.aggregate(pipeline);
     if (results.length === 0) return ctx.respond(404, Responses.NOT_FOUND);
 
     results = results.map(e => {
