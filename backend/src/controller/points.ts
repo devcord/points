@@ -75,9 +75,11 @@ class PointController {
     const { results } = await PointsModel.aggregate(pipeline);
     if (results.length === 0) return ctx.respond(404, Responses.NOT_FOUND);
 
-    results = results.map(e => { userId: e.id, total: e.total })
+    results = results.map(e => {
+     return { userId: e.id, total: e.total };
+    });
    
-   return ctx.respond(200, results)
+   return ctx.respond(200, results);
 
   }
 }
