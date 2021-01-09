@@ -49,22 +49,35 @@ class PointController {
 
 
     /* TODO: Type all of this */
-    const o = {};
-    o.map = function () { emit(this.userID, this.amount) };
-    o.reduce = function (k, vals) { return Array.sum(vals); };
-    o.query = {
-      createdAt: { $gte: date.toISOString() },
-    };
-    o.resolveToObject = true;
+    const pipeline = [
+     {
+       '$match': {
+         'date': {
+           '$gte': date.toISOString()
+         }
+       }
+     }, {
+       '$group': {
+         '_id': '$userID', 
+         'total': {
+           '$sum': '$amount'
+         }
+       }
+     }, {
+       '$sort': {
+         'total': -1
+       }
+     }, {
+       '$limit': 10
+     }
+   ];
+    
+    const { results } = await PointsModel.aggregate(pipeline);
+    if (results.length === 0) return ctx.respond(404, Responses.NOT_FOUND);
 
-    const res = await PointModel.mapReduce(o);
-    const { results } = res;
-    if (results.length === 0) {
-      return ctx.respond(404, Responses.NOT_FOUND);
-    } else {
-      return ctx.respond(200, results)
-    }
-
+    results = results.map(e => { userId: e.id, total: e.total })
+   
+   return ctx.respond(200, results)
 
   }
 }
